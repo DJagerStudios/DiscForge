@@ -76,6 +76,14 @@ jobs:
             || { cat build/self-test.txt; exit 1; }
           cat build/self-test.txt
           grep -q "bundled" build/self-test.txt
+          # every bundled tool must start from inside the download, with only its own libraries
+          t="$app/tools/bin"
+          "$t/cdrecord" -version 2>&1 | grep -i "cdrecord"
+          "$t/readcd" -version 2>&1 | grep -i "readcd"
+          "$t/mkisofs" -version 2>&1 | grep -i "mkisofs"
+          { "$t/cdrdao" 2>&1 || true; } | grep -i "cdrdao version"
+          { "$t/growisofs" -version 2>&1 || true; } | grep -i "growisofs"
+          "$t/7zz" i | grep "7-Zip"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: linux-${{ matrix.arch }}
@@ -210,6 +218,13 @@ jobs:
             || { cat build/self-test.txt; exit 1; }
           cat build/self-test.txt
           grep -q "bundled" build/self-test.txt
+          # every bundled tool must start from inside the bundle (signed, system libraries only)
+          t=build/check/DiscForge.app/Contents/Resources/tools/bin
+          "$t/cdrecord" -version 2>&1 | grep -i "cdrecord"
+          "$t/readcd" -version 2>&1 | grep -i "readcd"
+          "$t/mkisofs" -version 2>&1 | grep -i "mkisofs"
+          { "$t/cdrdao" 2>&1 || true; } | grep -i "cdrdao version"
+          "$t/7zz" i | grep "7-Zip"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: macos-${{ matrix.arch }}

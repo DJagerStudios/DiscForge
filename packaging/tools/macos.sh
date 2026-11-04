@@ -57,6 +57,8 @@ files in this folder). Their exact source archives are published with every Disc
 | Tool | Version | Licence | Source | SHA-256 |
 |---|---|---|---|---|
 EOF
+# (the backticks are Markdown, not a command)
+# shellcheck disable=SC2016
 source_row() { printf '| %s | %s | %s | %s | `%s` |\n' "$@" >> "$SOURCES"; }
 
 # --------------------------------------------------------------------------------------------

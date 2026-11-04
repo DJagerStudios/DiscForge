@@ -296,7 +296,8 @@ if [ "$(id -u)" != 0 ]; then echo "Run this as root (su or doas): ./install.sh" 
 # the package set's default Python (3.12 at the time of writing), so PySide6 comes prebuilt
 PYV=$(pkg rquery '%dn' python3 2>/dev/null | sed -n 's/^python\(3[0-9][0-9]*\)$/\1/p' | head -n1)
 PY=""
-for v in $PYV 312 313 311; do
+for v in "$PYV" 312 313 311; do
+    [ -n "$v" ] || continue
     if pkg rquery %n "py$v-pyside6" >/dev/null 2>&1; then PY=$v; break; fi
 done
 [ -n "$PY" ] || { echo "No PySide6 package was found for this FreeBSD release." >&2; exit 1; }
