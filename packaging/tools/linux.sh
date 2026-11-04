@@ -148,13 +148,16 @@ source_row 7-Zip 26.05 "LGPL-2.1-or-later, BSD-3-Clause, unRAR restriction" \
 # --------------------------------------------------------------------------------------------
 log "libraries"
 # Bundle any shared library outside the base set every distribution has, and point the tools at
-# their own lib folder.  (These tools normally need nothing beyond the base set.)
-base='^(linux-vdso|linux-gate|ld-linux|libc|libm|libdl|librt|libpthread|libresolv|libutil|libgcc_s|libstdc\+\+|libz)\.so'
+# their own lib folder.  (These tools normally need nothing beyond the base set.)  The dynamic
+# loader itself must never be bundled.
+base='^(linux-vdso|linux-gate|ld-linux.*|ld64|libc|libm|libdl|librt|libpthread|libresolv|libutil|libgcc_s|libstdc\+\+|libz|libcap)\.so'
 for b in "$OUT"/bin/*; do
-  ldd "$b" 2>/dev/null | awk '/=> \// {print $1, $3}' | while read -r name path; do
-    if ! [[ "$name" =~ $base ]]; then
-      cp -Ln "$path" "$OUT/lib/$name"
-      echo "  $(basename "$b") needs $name (bundled)"
+  # (ldd fails on static programs such as 7zz; that just means there's nothing to bundle)
+  { ldd "$b" 2>/dev/null || true; } | awk '/=> \// {print $1, $3}' | while read -r soname libfile; do
+    soname=${soname##*/}
+    if ! [[ "$soname" =~ $base ]]; then
+      cp -Ln "$libfile" "$OUT/lib/$soname"
+      echo "  $(basename "$b") needs $soname (bundled)"
     fi
   done
   if [ -n "$(ls -A "$OUT/lib")" ]; then
