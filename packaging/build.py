@@ -1,0 +1,433 @@
+#!/usr/bin/env python3
+"""Build DiscForge's standalone download for the system this runs on.
+
+    python3 packaging/build.py --version 1.1.0 [--tools DIR] [--out dist]
+
+Linux    DiscForge-<ver>-linux-<arch>.AppImage and .tar.gz
+Windows  DiscForge-<ver>-windows-<arch>.zip (portable: unzip and run DiscForge.exe)
+macOS    DiscForge-<ver>-macos-<arch>.zip (DiscForge.app)
+FreeBSD  DiscForge-<ver>-freebsd-<arch>.tar.gz (installs its dependencies with pkg)
+
+Python, Qt and DiscForge are frozen with PyInstaller; the burning tools (cdrecord, readcd, mkisofs,
+cdrdao, growisofs, chdman, 7z ...) that --tools points at are copied into tools/bin with
+their libraries and licences, so nothing has to be installed on the target system.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import os
+import platform
+import shutil
+import stat
+import subprocess
+import sys
+import tarfile
+import urllib.request
+import zipfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+CACHE = Path(os.environ.get("DISCFORGE_BUILD_CACHE", Path.home() / ".cache" / "discforge-build"))
+# appimagetool always runs on an x86_64 host; it gets the runtime of the target architecture
+APPIMAGETOOL = ("1.9.1", "ed4ce84f0d9caff66f50bcca6ff6f35aae54ce8135408b3fa33abfc3cb384eb0")
+APPIMAGE_RUNTIME = ("20251108", {"x86_64": "2fca8b443c92510f1483a883f60061ad09b46b978b2631c807cd873a47ec260d",
+                                 "aarch64": "00cbdfcf917cc6c0ff6d3347d59e0ca1f7f45a6df1a428a0d6d8a78664d87444"})
+
+
+def log(msg: str) -> None:
+    print(f"==> {msg}", flush=True)
+
+
+def run(cmd: list, **kw) -> None:
+    print("$ " + " ".join(str(c) for c in cmd), flush=True)
+    subprocess.run([str(c) for c in cmd], check=True, **kw)
+
+
+def system() -> str:
+    s = sys.platform
+    return ("windows" if s.startswith("win") else "macos" if s == "darwin" else "freebsd" if s.startswith("freebsd")
+            else "linux")
+
+
+def arch() -> str:
+    m = platform.machine().lower()
+    return {"amd64": "x86_64", "x64": "x86_64", "arm64": "aarch64"}.get(m, m)
+
+
+def code_version() -> str:
+    for line in (ROOT / "discforge" / "__init__.py").read_text().splitlines():
+        if line.startswith("__version__"):
+            return line.split("=")[1].strip().strip("\"'")
+    raise SystemExit("no __version__")
+
+
+def sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def fetch(url: str, dest: Path, expected: str) -> Path:
+    if not dest.exists() or sha256(dest) != expected:
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        log(f"download {url}")
+        tmp = dest.with_suffix(".part")
+        with urllib.request.urlopen(url, timeout=120) as r, open(tmp, "wb") as f:
+            shutil.copyfileobj(r, f)
+        got = sha256(tmp)
+        if got != expected:
+            tmp.unlink()
+            raise SystemExit(f"checksum mismatch for {url}: {got}")
+        tmp.replace(dest)
+    return dest
+
+
+# --------------------------------------------------------------------------
+# Icons from the SVG
+
+def render_png(size: int, out: Path) -> Path:
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from PySide6.QtCore import QRectF
+    from PySide6.QtGui import QGuiApplication, QImage, QPainter
+    from PySide6.QtSvg import QSvgRenderer
+    _app = QGuiApplication.instance() or QGuiApplication([])
+    img = QImage(size, size, QImage.Format.Format_ARGB32)
+    img.fill(0)
+    p = QPainter(img)
+    QSvgRenderer(str(ROOT / "discforge" / "data" / "discforge.svg")).render(p, QRectF(0, 0, size, size))
+    p.end()
+    img.save(str(out))
+    return out
+
+
+def write_ico(path: Path, work: Path) -> Path:
+    sizes = [16, 24, 32, 48, 64, 128, 256]
+    pngs = [render_png(s, work / f"icon-{s}.png").read_bytes() for s in sizes]
+    head = bytearray(b"\0\0\1\0" + len(sizes).to_bytes(2, "little"))
+    offset = 6 + 16 * len(sizes)
+    body = bytearray()
+    for s, data in zip(sizes, pngs):
+        head += bytes([s % 256, s % 256, 0, 0]) + (1).to_bytes(2, "little") + (32).to_bytes(2, "little")
+        head += len(data).to_bytes(4, "little") + (offset + len(body)).to_bytes(4, "little")
+        body += data
+    path.write_bytes(bytes(head + body))
+    return path
+
+
+def write_icns(path: Path, work: Path) -> Path:
+    chunks = b""
+    for tag, size in ((b"ic07", 128), (b"ic08", 256), (b"ic09", 512), (b"ic10", 1024), (b"ic11", 32),
+                      (b"ic12", 64), (b"ic13", 256), (b"ic14", 512)):
+        data = render_png(size, work / f"icns-{size}.png").read_bytes()
+        chunks += tag + (len(data) + 8).to_bytes(4, "big") + data
+    path.write_bytes(b"icns" + (len(chunks) + 8).to_bytes(4, "big") + chunks)
+    return path
+
+
+# --------------------------------------------------------------------------
+
+SPEC = r'''
+# generated by packaging/build.py
+import os
+ROOT = {root!r}
+datas = [(os.path.join(ROOT, "discforge", "data"), os.path.join("discforge", "data"))]
+hidden = ["PySide6.QtSvg", "PySide6.QtNetwork", "numpy", "lz4.block"] + {extra_hidden!r}
+excl = ["tkinter", "PySide6.QtWebEngineCore", "PySide6.QtWebEngineWidgets", "PySide6.Qt3DCore", "PySide6.QtQuick",
+        "PySide6.QtQml", "PySide6.QtMultimedia", "PySide6.QtCharts", "PySide6.QtDataVisualization",
+        "PySide6.QtPdf", "PySide6.QtBluetooth", "PySide6.QtSql", "PySide6.QtTest"]
+gui = Analysis([os.path.join(ROOT, "packaging", "entry_gui.py")], pathex=[ROOT], datas=datas, hiddenimports=hidden,
+               excludes=excl, noarchive=False)
+cli = Analysis([os.path.join(ROOT, "packaging", "entry_cli.py")], pathex=[ROOT], datas=[], hiddenimports=hidden,
+               excludes=excl, noarchive=False)
+gui_pyz = PYZ(gui.pure)
+cli_pyz = PYZ(cli.pure)
+gui_exe = EXE(gui_pyz, gui.scripts, [], exclude_binaries=True, name="DiscForge", console=False, icon={icon!r},
+              disable_windowed_traceback=False)
+cli_exe = EXE(cli_pyz, cli.scripts, [], exclude_binaries=True, name={cli_name!r}, console=True, icon={icon!r})
+coll = COLLECT(gui_exe, gui.binaries, gui.datas, cli_exe, cli.binaries, cli.datas, name="DiscForge")
+{bundle}
+'''
+
+BUNDLE = r'''
+app = BUNDLE(coll, name="DiscForge.app", icon={icon!r}, bundle_identifier="io.github.djagerstudios.discforge",
+             info_plist={{"CFBundleShortVersionString": {ver!r}, "CFBundleVersion": {ver!r},
+                          "NSHighResolutionCapable": True, "LSMinimumSystemVersion": "14.0",
+                          "CFBundleDocumentTypes": [{{"CFBundleTypeName": "Disc image", "CFBundleTypeRole": "Viewer",
+                              "CFBundleTypeExtensions": ["iso", "cue", "bin", "chd", "cdi", "gdi", "wbfs", "rvz",
+                                                          "gcz", "cso", "zso", "ecm", "ccd"]}}]}})
+'''
+
+
+def cli_name(sysname: str) -> str:
+    """The command-line executable.  Windows and macOS file systems ignore case, so there it can't be
+    called 'discforge' next to the 'DiscForge' window program."""
+    return "discforge-cli" if sysname in ("windows", "macos") else "discforge"
+
+
+def freeze(ver: str, work: Path, sysname: str) -> Path:
+    icon = None
+    if sysname == "windows":
+        icon = str(write_ico(work / "discforge.ico", work))
+    elif sysname == "macos":
+        icon = str(write_icns(work / "discforge.icns", work))
+    extra = ["PySide6.QtDBus"] if sysname in ("linux", "freebsd") else []
+    spec = work / "DiscForge.spec"
+    spec.write_text(SPEC.format(root=str(ROOT), extra_hidden=extra, icon=icon, cli_name=cli_name(sysname),
+                                bundle=BUNDLE.format(icon=icon, ver=ver) if sysname == "macos" else ""))
+    run([sys.executable, "-m", "PyInstaller", "--noconfirm", "--clean", "--distpath", work / "dist",
+         "--workpath", work / "build", spec])
+    if sysname == "macos":
+        return work / "dist" / "DiscForge.app"
+    return work / "dist" / "DiscForge"
+
+
+def add_tools(app_dir: Path, tools: Path | None, sysname: str) -> None:
+    """tools/bin + tools/lib + tools/licenses inside the frozen app."""
+    if not tools or not tools.is_dir():
+        log("no bundled tools (the system's will be used)")
+        return
+    dest = (app_dir / "Contents" / "Resources" / "tools") if sysname == "macos" else (app_dir / "tools")
+    if dest.exists():
+        shutil.rmtree(dest)
+    shutil.copytree(tools, dest, symlinks=True)
+    for p in (dest / "bin").iterdir():
+        if p.is_file():
+            p.chmod(p.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+    log(f"bundled tools: {', '.join(sorted(p.name for p in (dest / 'bin').iterdir()))}")
+
+
+def legal(app_dir: Path) -> None:
+    lic = app_dir / "LICENSES"
+    lic.mkdir(exist_ok=True)
+    shutil.copy(ROOT / "LICENSE", lic / "DiscForge-LICENSE.txt")
+    for rel in ("discforge/data/libcrypt/LICENSE", "discforge/data/fonts/OFL.txt",
+                "discforge/data/icons/LICENSE-lucide.txt", "discforge/data/IP.TMPL.LICENSE"):
+        src = ROOT / rel
+        if src.exists():
+            shutil.copy(src, lic / (src.parent.name + "-" + src.name))
+
+
+def zip_dir(folder: Path, archive: Path, root_name: str) -> Path:
+    with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+        for p in sorted(folder.rglob("*")):
+            rel = Path(root_name) / p.relative_to(folder)
+            if p.is_symlink():
+                info = zipfile.ZipInfo(str(rel))
+                info.create_system = 3
+                info.external_attr = (0o120777 << 16)
+                z.writestr(info, os.readlink(p))
+            elif p.is_file():
+                info = zipfile.ZipInfo.from_file(p, str(rel))
+                mode = 0o755 if os.access(p, os.X_OK) else 0o644
+                info.external_attr = (stat.S_IFREG | mode) << 16
+                info.compress_type = zipfile.ZIP_DEFLATED
+                with open(p, "rb") as f:
+                    z.writestr(info, f.read())
+    return archive
+
+
+def tar_dir(folder: Path, archive: Path, root_name: str) -> Path:
+    def clean(info: tarfile.TarInfo):
+        info.uid = info.gid = 0
+        info.uname = info.gname = "root"
+        if info.isfile():
+            info.mode = 0o755 if info.mode & 0o111 else 0o644
+        return info
+
+    with tarfile.open(archive, "w:gz", compresslevel=9) as t:
+        t.add(folder, arcname=root_name, filter=clean)
+    return archive
+
+
+DESKTOP = """[Desktop Entry]
+Type=Application
+Name=DiscForge
+GenericName=Retro Game Disc Burner
+Comment=Burn retro games, homebrew and software to CD and DVD
+Exec={exec} %f
+Icon=discforge
+Terminal=false
+Categories=AudioVideo;DiscBurning;
+Keywords=burn;cd-r;dvd-r;dreamcast;playstation;ps2;gamecube;wii;xbox;saturn;iso;cue;chd;
+MimeType=application/x-cue;application/x-cd-image;application/vnd.efi.iso;application/x-discjuggler-cd-image;application/x-gd-rom-cue;application/x-mame-chd;
+StartupWMClass=discforge
+"""
+
+
+def appimage(app_dir: Path, out: Path, ver: str, work: Path, a: str | None = None) -> Path:
+    a = a or arch()
+    appdir = work / "DiscForge.AppDir"
+    if appdir.exists():
+        shutil.rmtree(appdir)
+    (appdir / "usr" / "lib").mkdir(parents=True)
+    shutil.copytree(app_dir, appdir / "usr" / "lib" / "discforge", symlinks=True)
+    (appdir / "AppRun").write_text(
+        '#!/bin/sh\nHERE="$(dirname "$(readlink -f "$0")")"\n'
+        'export DISCFORGE_TOOLS="$HERE/usr/lib/discforge/tools/bin"\n'
+        '# command-line use: DiscForge.AppImage doctor | info GAME | burn GAME ...\n'
+        'case "$1" in info|burn|doctor|drives|cdi|test|scramble|descramble|-h|--help|--version)\n'
+        '    exec "$HERE/usr/lib/discforge/discforge" "$@" ;;\nesac\n'
+        'exec "$HERE/usr/lib/discforge/DiscForge" "$@"\n')
+    (appdir / "AppRun").chmod(0o755)
+    (appdir / "discforge.desktop").write_text(DESKTOP.format(exec="DiscForge"))
+    shutil.copy(ROOT / "discforge" / "data" / "discforge.svg", appdir / "discforge.svg")
+    render_png(256, appdir / ".DirIcon")
+    tool = fetch(f"https://github.com/AppImage/appimagetool/releases/download/{APPIMAGETOOL[0]}/"
+                 f"appimagetool-x86_64.AppImage", CACHE / f"appimagetool-{APPIMAGETOOL[0]}-x86_64.AppImage",
+                 APPIMAGETOOL[1])
+    runtime = fetch(f"https://github.com/AppImage/type2-runtime/releases/download/{APPIMAGE_RUNTIME[0]}/runtime-{a}",
+                    CACHE / f"runtime-{APPIMAGE_RUNTIME[0]}-{a}", APPIMAGE_RUNTIME[1][a])
+    tool.chmod(0o755)
+    target = out / f"DiscForge-{ver}-linux-{a}.AppImage"
+    env = dict(os.environ, ARCH=a, APPIMAGE_EXTRACT_AND_RUN="1")
+    run([tool, "--no-appstream", "--runtime-file", runtime, appdir, target], env=env)
+    return target
+
+
+FREEBSD_INSTALL = r"""#!/bin/sh
+# Installs what DiscForge needs with pkg, puts a 'discforge' launcher in /usr/local/bin and adds
+# it to the applications menu.  Run as root from the unpacked folder: ./install.sh
+set -e
+HERE=$(cd "$(dirname "$0")" && pwd)
+if [ "$(id -u)" != 0 ]; then echo "Run this as root (su or doas): ./install.sh" >&2; exit 1; fi
+# the package set's default Python (3.12 at the time of writing), so PySide6 comes prebuilt
+PYV=$(pkg rquery '%dn' python3 2>/dev/null | sed -n 's/^python\(3[0-9][0-9]*\)$/\1/p' | head -n1)
+PY=""
+for v in $PYV 312 313 311; do
+    if pkg rquery %n "py$v-pyside6" >/dev/null 2>&1; then PY=$v; break; fi
+done
+[ -n "$PY" ] || { echo "No PySide6 package was found for this FreeBSD release." >&2; exit 1; }
+pkg install -y "python$PY" "py$PY-pyside6" "py$PY-numpy" "py$PY-lz4" cdrtools cdrdao dvd+rw-tools 7-zip
+ln -sf "$HERE/discforge.sh" /usr/local/bin/discforge
+mkdir -p /usr/local/share/applications /usr/local/share/icons/hicolor/scalable/apps
+cp "$HERE/discforge.desktop" /usr/local/share/applications/
+cp "$HERE/discforge/data/discforge.svg" /usr/local/share/icons/hicolor/scalable/apps/
+cat <<'DONE'
+DiscForge is installed: run 'discforge' for the window, or 'discforge --help'.
+
+To burn without root, let your user reach the drive (once, as root):
+    pw groupmod operator -m YOUR_USER_NAME
+    printf '%s\n' '[localrules=10]' "add path 'cd*' mode 0660 group operator" \
+        "add path 'pass*' mode 0660 group operator" "add path 'xpt*' mode 0660 group operator" \
+        >> /etc/devfs.rules
+    sysrc devfs_system_ruleset=localrules
+    service devfs restart
+Then log out and back in.  (For .chd games, build emulators/mame with its TOOLS option.)
+DONE
+"""
+
+FREEBSD_LAUNCHER = """#!/bin/sh
+# DiscForge launcher: the window with no arguments, the command line otherwise (discforge --help)
+HERE=$(dirname "$(readlink -f "$0")")
+if [ $# -eq 0 ]; then set -- gui; fi
+for py in python3.13 python3.12 python3.11 python3; do
+    if command -v "$py" >/dev/null 2>&1 && "$py" -c 'import PySide6, numpy' 2>/dev/null; then
+        PYTHONPATH="$HERE" exec "$py" -m discforge "$@"
+    fi
+done
+echo "DiscForge needs Python 3 with PySide6 and numpy: run $HERE/install.sh as root." >&2
+exit 1
+"""
+
+LINUX_INSTALL = r"""#!/bin/sh
+# Adds DiscForge to your applications menu, from wherever you unpacked it.
+#   ./install.sh            add it
+#   ./install.sh --remove   take it out again
+set -e
+HERE=$(cd "$(dirname "$0")" && pwd -P)
+DATA=${XDG_DATA_HOME:-$HOME/.local/share}
+APPS="$DATA/applications"
+ICONS="$DATA/icons/hicolor/scalable/apps"
+if [ "${1:-}" = "--remove" ]; then
+    rm -f "$APPS/discforge.desktop" "$ICONS/discforge.svg"
+    echo "DiscForge was taken out of the applications menu."
+    exit 0
+fi
+mkdir -p "$APPS" "$ICONS"
+cp "$HERE/_internal/discforge/data/discforge.svg" "$ICONS/discforge.svg"
+sed "s|^Exec=.*|Exec=\"$HERE/DiscForge\" %f|" "$HERE/discforge.desktop" > "$APPS/discforge.desktop"
+chmod 644 "$APPS/discforge.desktop"
+if command -v update-desktop-database >/dev/null 2>&1; then
+    update-desktop-database "$APPS" >/dev/null 2>&1 || true
+fi
+echo "DiscForge is in your applications menu.  (Command line: $HERE/discforge --help)"
+"""
+
+
+def freebsd(out: Path, ver: str, work: Path) -> list[Path]:
+    """FreeBSD gets DiscForge as Python sources on top of pkg's Python, Qt and tools."""
+    stage = work / "DiscForge"
+    if stage.exists():
+        shutil.rmtree(stage)
+    shutil.copytree(ROOT / "discforge", stage / "discforge", ignore=shutil.ignore_patterns("__pycache__"))
+    (stage / "discforge.sh").write_text(FREEBSD_LAUNCHER)
+    (stage / "discforge.sh").chmod(0o755)
+    (stage / "install.sh").write_text(FREEBSD_INSTALL)
+    (stage / "install.sh").chmod(0o755)
+    (stage / "discforge.desktop").write_text(DESKTOP.format(exec="/usr/local/bin/discforge gui"))
+    legal(stage)
+    return [tar_dir(stage, out / f"DiscForge-{ver}-freebsd-{arch()}.tar.gz", "DiscForge")]
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--version", default=None)
+    ap.add_argument("--tools", type=Path, default=None, help="folder with bin/ (+ lib/, licenses/) to bundle")
+    ap.add_argument("--out", type=Path, default=ROOT / "dist")
+    ap.add_argument("--no-appimage", action="store_true")
+    ap.add_argument("--appimage-from", type=Path, help="only wrap an already frozen Linux build as an AppImage")
+    ap.add_argument("--arch", default=None, help="target architecture for --appimage-from")
+    args = ap.parse_args()
+    if args.appimage_from:
+        ver = args.version or code_version()
+        work = ROOT / "build" / f"appimage-{args.arch or arch()}"
+        work.mkdir(parents=True, exist_ok=True)
+        args.out.mkdir(parents=True, exist_ok=True)
+        t = appimage(args.appimage_from, args.out, ver, work, args.arch)
+        log(f"{t.name}  {t.stat().st_size / 1e6:.1f} MB  sha256 {sha256(t)}")
+        return 0
+    ver = args.version or code_version()
+    if ver.split("-")[0] != code_version():
+        raise SystemExit(f"--version {ver} doesn't match discforge/__init__.py ({code_version()})")
+    sysname = system()
+    out = args.out
+    out.mkdir(parents=True, exist_ok=True)
+    work = ROOT / "build" / f"{sysname}-{arch()}"
+    work.mkdir(parents=True, exist_ok=True)
+    made: list[Path] = []
+    if sysname == "freebsd":
+        made += freebsd(out, ver, work)
+    else:
+        app = freeze(ver, work, sysname)
+        add_tools(app, args.tools, sysname)
+        legal(app if sysname != "macos" else app / "Contents" / "Resources")
+        name = f"DiscForge-{ver}-{sysname}-{arch()}"
+        if sysname == "linux":
+            (app / "install.sh").write_text(LINUX_INSTALL)
+            (app / "install.sh").chmod(0o755)
+            (app / "discforge.desktop").write_text(DESKTOP.format(exec="DiscForge"))
+            made.append(tar_dir(app, out / f"{name}.tar.gz", "DiscForge"))
+            if not args.no_appimage and arch() == "x86_64":
+                made.append(appimage(app, out, ver, work))
+        elif sysname == "windows":
+            made.append(zip_dir(app, out / f"{name}.zip", "DiscForge"))
+        elif sysname == "macos":
+            # adding the tools broke PyInstaller's signature: sign everything again (ad hoc), or
+            # Apple Silicon refuses to start it
+            run(["codesign", "--force", "--deep", "--sign", "-", app])
+            run(["codesign", "--verify", "--deep", "--strict", app])
+            target = out / f"{name}.zip"
+            if target.exists():
+                target.unlink()
+            run(["ditto", "-c", "-k", "--sequesterRsrc", "--keepParent", app, target])
+            made.append(target)
+    for m in made:
+        log(f"{m.name}  {m.stat().st_size / 1e6:.1f} MB  sha256 {sha256(m)}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

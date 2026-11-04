@@ -1,0 +1,1978 @@
+{
+ "source": "https://github.com/alex-free/libcrypt-patcher",
+ "version": "1.1.0",
+ "games": {
+  "SCES_003.11": {
+   "title": "MediEvil (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_003.11.PPF"
+    }
+   ]
+  },
+  "SCES_014.31": {
+   "title": "Disney's Tarzan (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_014.31.PPF"
+    }
+   ]
+  },
+  "SCES_014.44": {
+   "title": "Jackie Chan Stuntmaster (Europe) (Recalled) /  Jackie Chan Stuntmaster (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_014.44.PPF"
+    }
+   ]
+  },
+  "SCES_014.92": {
+   "title": "MediEvil (France)",
+   "variants": [
+    {
+     "ppf": "SCES_014.92.PPF"
+    }
+   ]
+  },
+  "SCES_014.93": {
+   "title": "MediEvil (Germany)",
+   "variants": [
+    {
+     "ppf": "SCES_014.93.PPF"
+    }
+   ]
+  },
+  "SCES_014.94": {
+   "title": "MediEvil (Italy)",
+   "variants": [
+    {
+     "ppf": "SCES_014.94.PPF"
+    }
+   ]
+  },
+  "SCES_014.95": {
+   "title": "MediEvil (Spain)",
+   "variants": [
+    {
+     "ppf": "SCES_014.95.PPF"
+    }
+   ]
+  },
+  "SCES_015.16": {
+   "title": "Disney Tarzan (France)",
+   "variants": [
+    {
+     "ppf": "SCES_015.16.PPF"
+    }
+   ]
+  },
+  "SCES_015.17": {
+   "title": "Disneys Tarzan (Germany)",
+   "variants": [
+    {
+     "ppf": "SCES_015.17.PPF"
+    }
+   ]
+  },
+  "SCES_015.18": {
+   "title": "Disney's Tarzan (Italy)",
+   "variants": [
+    {
+     "ppf": "SCES_015.18.PPF"
+    }
+   ]
+  },
+  "SCES_015.19": {
+   "title": "Disney's Tarzan (Spain)",
+   "variants": [
+    {
+     "ppf": "SCES_015.19.PPF"
+    }
+   ]
+  },
+  "SCES_015.64": {
+   "title": "Ape Escape (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_015.64.PPF"
+    }
+   ]
+  },
+  "SCES_016.95": {
+   "title": "Disney's Mulan: Story Studio (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_016.95.PPF"
+    }
+   ]
+  },
+  "SCES_017.00": {
+   "title": "This Is Football (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_017.00.PPF"
+    }
+   ]
+  },
+  "SCES_017.01": {
+   "title": "Le Monde des Bleus: Le Jeu Officiel de l'\u00c9quipe de France (France)",
+   "variants": [
+    {
+     "ppf": "SCES_017.01.PPF"
+    }
+   ]
+  },
+  "SCES_017.02": {
+   "title": "Fussball Live (Germany)",
+   "variants": [
+    {
+     "ppf": "SCES_017.02.PPF"
+    }
+   ]
+  },
+  "SCES_017.03": {
+   "title": "This Is Football (Italy)",
+   "variants": [
+    {
+     "ppf": "SCES_017.03.PPF"
+    }
+   ]
+  },
+  "SCES_017.04": {
+   "title": "Esto Es Futbol Spain",
+   "variants": [
+    {
+     "ppf": "SCES_017.04.PPF"
+    }
+   ]
+  },
+  "SCES_017.63": {
+   "title": "Speed Freaks (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_017.63.PPF"
+    }
+   ]
+  },
+  "SCES_018.82": {
+   "title": "This is Football (Europe) (Fr,NI)",
+   "variants": [
+    {
+     "ppf": "SCES_018.82.PPF"
+    }
+   ]
+  },
+  "SCES_019.09": {
+   "title": "Wip3out (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_019.09.PPF"
+    }
+   ]
+  },
+  "SCES_019.79": {
+   "title": "Formula One 99 (Europe) (En,Fr,De,It) / Formula One 99 (Europe) (En,Fr,De,It) (Beta)",
+   "variants": [
+    {
+     "check": [
+      37736,
+      164
+     ],
+     "ppf": "SCES_019.79.PPF",
+     "title": "Formula One 99 (Europe) (En,Fr,De,It)",
+     "unprotected": false
+    },
+    {
+     "check": [
+      37736,
+      230
+     ],
+     "ppf": "SCES_019.79_BETA_9_9_1999.PPF",
+     "title": "Formula One 99 (Europe) (En,Fr,De,It) (Beta 9/9/1999)",
+     "unprotected": false
+    }
+   ]
+  },
+  "SCES_020.04": {
+   "title": "Disney Fais Ton Histoire! Mulan (France)",
+   "variants": [
+    {
+     "ppf": "SCES_020.04.PPF"
+    }
+   ]
+  },
+  "SCES_020.05": {
+   "title": "Disneys Interaktive Abenteuer: Mulan (Disneys Interaktive Abenteuer: Mulan)(Germany)",
+   "variants": [
+    {
+     "ppf": "SCES_020.05.PPF"
+    }
+   ]
+  },
+  "SCES_020.06": {
+   "title": "Disney Libro Animato Creativo: Mulan (Italy)",
+   "variants": [
+    {
+     "ppf": "SCES_020.06.PPF"
+    }
+   ]
+  },
+  "SCES_020.07": {
+   "title": "Disney's Aventura Interactiva: Mulan (Spain)",
+   "variants": [
+    {
+     "ppf": "SCES_020.07.PPF"
+    }
+   ]
+  },
+  "SCES_020.28": {
+   "title": "Ape Escape (France)",
+   "variants": [
+    {
+     "ppf": "SCES_020.28.PPF"
+    }
+   ]
+  },
+  "SCES_020.29": {
+   "title": "Ape Escape (Germany)",
+   "variants": [
+    {
+     "ppf": "SCES_020.29.PPF"
+    }
+   ]
+  },
+  "SCES_020.30": {
+   "title": "Ape Escape (Italy)",
+   "variants": [
+    {
+     "ppf": "SCES_020.30.PPF"
+    }
+   ]
+  },
+  "SCES_020.31": {
+   "title": "Ape Escape: La Invasi\u00f3n de los Monos (Spain)",
+   "variants": [
+    {
+     "ppf": "SCES_020.31.PPF"
+    }
+   ]
+  },
+  "SCES_021.04": {
+   "title": "Spyro 2: Gateway to Glimmer (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_021.04.PPF"
+    }
+   ]
+  },
+  "SCES_021.05": {
+   "title": "CTR: Crash Team Racing (Europe) / CTR: Crash Team Racing (EDC) (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_021.05.PPF"
+    }
+   ]
+  },
+  "SCES_021.81": {
+   "title": "Disneys Tarzan (Denmark)",
+   "variants": [
+    {
+     "ppf": "SCES_021.81.PPF"
+    }
+   ]
+  },
+  "SCES_021.82": {
+   "title": "Disneys Tarzan (Sweden)",
+   "variants": [
+    {
+     "ppf": "SCES_021.82.PPF"
+    }
+   ]
+  },
+  "SCES_021.84": {
+   "title": "Disneyn Tarzan (Finland)",
+   "variants": [
+    {
+     "ppf": "SCES_021.84.PPF"
+    }
+   ]
+  },
+  "SCES_021.85": {
+   "title": "Disney's Tarzan (Netherlands)",
+   "variants": [
+    {
+     "ppf": "SCES_021.85.PPF"
+    }
+   ]
+  },
+  "SCES_022.22": {
+   "title": "Formula One 99 (Europe) (En,Es,Fi)",
+   "variants": [
+    {
+     "ppf": "SCES_022.22.PPF"
+    }
+   ]
+  },
+  "SCES_022.64": {
+   "title": "Disney's Verhalenstudio: Mulan (Netherlands)",
+   "variants": [
+    {
+     "ppf": "SCES_022.64.PPF"
+    }
+   ]
+  },
+  "SCES_022.69": {
+   "title": "This Is Soccer (Australia)",
+   "variants": [
+    {
+     "ppf": "SCES_022.69.PPF"
+    }
+   ]
+  },
+  "SCES_022.90": {
+   "title": "Space Debris (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_022.90.PPF"
+    }
+   ]
+  },
+  "SCES_023.65": {
+   "title": "Barbie: Race & Ride (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_023.65.PPF"
+    }
+   ]
+  },
+  "SCES_023.66": {
+   "title": "Barbie: Aventure Equestre (France)",
+   "variants": [
+    {
+     "ppf": "SCES_023.66.PPF"
+    }
+   ]
+  },
+  "SCES_023.67": {
+   "title": "Barbie: Race & Ride (Germany)",
+   "variants": [
+    {
+     "ppf": "SCES_023.67.PPF"
+    }
+   ]
+  },
+  "SCES_023.68": {
+   "title": "Barbie: Race & Ride (Italy)",
+   "variants": [
+    {
+     "ppf": "SCES_023.68.PPF"
+    }
+   ]
+  },
+  "SCES_023.69": {
+   "title": "Barbie: Race & Ride (Spain)",
+   "variants": [
+    {
+     "ppf": "SCES_023.69.PPF"
+    }
+   ]
+  },
+  "SCES_024.30": {
+   "title": "Space Debris (France)",
+   "variants": [
+    {
+     "ppf": "SCES_024.30.PPF"
+    }
+   ]
+  },
+  "SCES_024.31": {
+   "title": "Space Debris (Germany) / Space Debris (Germany) (Beta 11/11/1999)",
+   "variants": [
+    {
+     "check": [
+      30572,
+      0
+     ],
+     "ppf": "SCES_024.31.PPF",
+     "title": "Space Debris (Germany)",
+     "unprotected": false
+    },
+    {
+     "check": [
+      30572,
+      63
+     ],
+     "ppf": "SCES_024.31_BETA_11_11_1999.PPF",
+     "title": "Space Debris (Germany) (Beta 11/11/1999)",
+     "unprotected": false
+    }
+   ]
+  },
+  "SCES_024.32": {
+   "title": "Space Debris (Italy)",
+   "variants": [
+    {
+     "ppf": "SCES_024.32.PPF"
+    }
+   ]
+  },
+  "SCES_024.33": {
+   "title": "Space Debris (Spain)",
+   "variants": [
+    {
+     "ppf": "SCES_024.33.PPF"
+    }
+   ]
+  },
+  "SCES_024.87": {
+   "title": "Barbie: Super Sports (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_024.87.PPF"
+    }
+   ]
+  },
+  "SCES_024.88": {
+   "title": "Barbie: Sports Extr\u00eame (France)",
+   "variants": [
+    {
+     "ppf": "SCES_024.88.PPF"
+    }
+   ]
+  },
+  "SCES_024.89": {
+   "title": "Barbie: Super Sport (Germany)",
+   "variants": [
+    {
+     "ppf": "SCES_024.89.PPF"
+    }
+   ]
+  },
+  "SCES_024.90": {
+   "title": "Barbie: Super Sports (Italy)",
+   "variants": [
+    {
+     "ppf": "SCES_024.90.PPF"
+    }
+   ]
+  },
+  "SCES_024.91": {
+   "title": "Barbie: Super Sports (Spain)",
+   "variants": [
+    {
+     "ppf": "SCES_024.91.PPF"
+    }
+   ]
+  },
+  "SCES_025.44": {
+   "title": "MediEvil 2 (En,Fr,De) (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_025.44.PPF"
+    }
+   ]
+  },
+  "SCES_025.45": {
+   "title": "MediEvil 2 (Es, It, Pt) (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_025.45.PPF"
+    }
+   ]
+  },
+  "SCES_025.46": {
+   "title": "MediEvil 2 (Russia)",
+   "variants": [
+    {
+     "ppf": "SCES_025.46.PPF"
+    }
+   ]
+  },
+  "SCES_028.34": {
+   "title": "Crash Bash (En,Fr,De,Es,It,Nl) (Europe)",
+   "variants": [
+    {
+     "ppf": "SCES_028.34.PPF"
+    }
+   ]
+  },
+  "SCES_028.35": {
+   "title": "Spyro: Year of the Dragon (Europe) (En,Fr,De,Es,It) (v1.0) / Spyro: Year of the Dragon (Europe) (En,Fr,De,Es,It) (v1.1)",
+   "variants": [
+    {
+     "check": [
+      37831,
+      9
+     ],
+     "ppf": "SCES_028.35_REV_0.PPF",
+     "title": "Spyro: Year of the Dragon (Europe) (En,Fr,De,Es,It) (v1.0)",
+     "unprotected": false
+    },
+    {
+     "check": [
+      37831,
+      10
+     ],
+     "ppf": "SCES_028.35_REV_1.PPF",
+     "title": "Spyro: Year of the Dragon (Europe) (En,Fr,De,Es,It) (v1.1)",
+     "unprotected": false
+    }
+   ]
+  },
+  "SLES1979.02": {
+   "title": "Formula One 99 (Europe) (En,Fr,De,It) (prototype 8/12/1999)",
+   "variants": [
+    {
+     "ppf": "SLES1979.02_PROTOTYPE.PPF"
+    }
+   ]
+  },
+  "SLES_000.17": {
+   "title": "Prince Naseem Boxing (Europe) (En,Fr,De,Es,It)",
+   "variants": [
+    {
+     "ppf": "SLES_000.17.PPF"
+    }
+   ]
+  },
+  "SLES_009.95": {
+   "title": "Ronaldo V-Football (En,Fr,Nl,Sv) (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_009.95.PPF"
+    }
+   ]
+  },
+  "SLES_010.41": {
+   "title": "Hogs of War (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_010.41.PPF"
+    }
+   ]
+  },
+  "SLES_012.26": {
+   "title": "Actua Ice Hockey 2 (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_012.26.PPF"
+    }
+   ]
+  },
+  "SLES_012.41": {
+   "title": "Gekido: Urban Fighters (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_012.41.PPF"
+    }
+   ]
+  },
+  "SLES_013.01": {
+   "title": "Legacy of Kain: Soul Reaver (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_013.01.PPF"
+    }
+   ]
+  },
+  "SLES_013.62": {
+   "title": "Le Mans 24 Hours (Europe) (En,Fr,De,Es,It,Pt)",
+   "variants": [
+    {
+     "ppf": "SLES_013.62.PPF"
+    }
+   ]
+  },
+  "SLES_015.45": {
+   "title": "Michelin Rally Masters: Race of Champions (Europe) (En,De,Sv)",
+   "variants": [
+    {
+     "ppf": "SLES_015.45.PPF"
+    }
+   ]
+  },
+  "SLES_017.15": {
+   "title": "Eagle One: Harrier Attack (Europe) (En,Fr,De,Es,It)",
+   "variants": [
+    {
+     "ppf": "SLES_017.15.PPF"
+    }
+   ]
+  },
+  "SLES_017.33": {
+   "title": "UEFA Striker (Europe) (En,Fr,De,Es,It,Nl)",
+   "variants": [
+    {
+     "ppf": "SLES_017.33.PPF"
+    }
+   ]
+  },
+  "SLES_018.79": {
+   "title": "OverBlood 2 (Europe) (Disc 1) (v1.0) / OverBlood 2 (Europe) (Disc 1) (v1.1)",
+   "variants": [
+    {
+     "check": [
+      37736,
+      23
+     ],
+     "ppf": "SLES_X18.79.PPF",
+     "title": "OverBlood 2 (Europe) (Disc 1) (v1.0)",
+     "unprotected": false
+    },
+    {
+     "check": [
+      37736,
+      22
+     ],
+     "ppf": null,
+     "title": "OverBlood 2 (Europe) (Disc 1) (v1.1) does not contain LibCrypt protection, nothing to patch!)",
+     "unprotected": true
+    }
+   ],
+   "disc": "Disc 1"
+  },
+  "SLES_018.80": {
+   "title": "OverBlood 2 (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_X18.80.PPF"
+    }
+   ]
+  },
+  "SLES_019.06": {
+   "title": "Mission: Impossible (Europe) (En,Fr,De,Es,It)",
+   "variants": [
+    {
+     "ppf": "SLES_019.06.PPF"
+    }
+   ]
+  },
+  "SLES_019.07": {
+   "title": "V-Rally: Championship Edition 2 (Europe) (En,Fr,De)",
+   "variants": [
+    {
+     "ppf": "SLES_019.07.PPF"
+    }
+   ]
+  },
+  "SLES_019.53": {
+   "title": "Radikal Bikers (Europe) (En,Fr,De,Es,It)",
+   "variants": [
+    {
+     "ppf": "SLES_019.43.PPF"
+    }
+   ]
+  },
+  "SLES_020.24": {
+   "title": "Legacy of Kain: Soul Reaver (France)",
+   "variants": [
+    {
+     "ppf": "SLES_020.24.PPF"
+    }
+   ]
+  },
+  "SLES_020.25": {
+   "title": "Legacy of Kain: Soul Reaver (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_020.25.PPF"
+    }
+   ]
+  },
+  "SLES_020.26": {
+   "title": "Legacy of Kain: Soul Reaver (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_020.26.PPF"
+    }
+   ]
+  },
+  "SLES_020.27": {
+   "title": "Legacy of Kain: Soul Reaver (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_020.27.PPF"
+    }
+   ]
+  },
+  "SLES_020.61": {
+   "title": "PGA European Tour Golf (En,De) (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_020.61.PPF"
+    }
+   ]
+  },
+  "SLES_020.71": {
+   "title": "Urban Chaos (Europe) (En,Es,It)",
+   "variants": [
+    {
+     "ppf": "SLES_020.71.PPF"
+    }
+   ]
+  },
+  "SLES_020.80": {
+   "title": "Final Fantasy VIII (Disc 1) (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_020.80.PPF"
+    }
+   ]
+  },
+  "SLES_020.81": {
+   "title": "Final Fantasy VIII (Disc 1) (France)",
+   "variants": [
+    {
+     "ppf": "SLES_020.81.PPF"
+    }
+   ]
+  },
+  "SLES_020.82": {
+   "title": "Final Fantasy VIII (Disc 1) (Germany) / Final Fantasy VIII (Disc 2) (Germany) / Final Fantasy VIII (Disc 3) (Germany) / Final Fantasy VIII (Disc 4) (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_X20.82.PPF"
+    }
+   ],
+   "disc": "Disc 1"
+  },
+  "SLES_020.83": {
+   "title": "Final Fantasy VIII (Disc 1) (Italy) / Final Fantasy VIII (Disc 2) (Italy) / Final Fantasy VIII (Disc 3) (Italy) / Final Fantasy VIII (Disc 4) (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_X20.83.PPF"
+    }
+   ],
+   "disc": "Disc 1"
+  },
+  "SLES_020.84": {
+   "title": "Final Fantasy VIII (Disc 1) (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_020.84.PPF"
+    }
+   ]
+  },
+  "SLES_020.86": {
+   "title": "N-Gen Racing (Europe) (En,Fr,De,Es,It)",
+   "variants": [
+    {
+     "ppf": "SLES_020.86.PPF"
+    }
+   ]
+  },
+  "SLES_021.12": {
+   "title": "SaGa Frontier 2 (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_021.12.PPF"
+    }
+   ]
+  },
+  "SLES_021.13": {
+   "title": "SaGa Frontier 2 (France)",
+   "variants": [
+    {
+     "ppf": "SLES_021.13.PPF"
+    }
+   ]
+  },
+  "SLES_021.18": {
+   "title": "SaGa Frontier 2 (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_021.18.PPF"
+    }
+   ]
+  },
+  "SLES_022.07": {
+   "title": "Dino Crisis (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_022.07.PPF"
+    }
+   ]
+  },
+  "SLES_022.08": {
+   "title": "Dino Crisis (France)",
+   "variants": [
+    {
+     "ppf": "SLES_022.08.PPF"
+    }
+   ]
+  },
+  "SLES_022.09": {
+   "title": "Dino Crisis (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_022.09.PPF"
+    }
+   ]
+  },
+  "SLES_022.10": {
+   "title": "Dino Crisis (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_022.10.PPF"
+    }
+   ]
+  },
+  "SLES_022.11": {
+   "title": "Dino Crisis (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_022.11.PPF"
+    }
+   ]
+  },
+  "SLES_022.92": {
+   "title": "Premier Manager 2000 (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_022.92.PPF"
+    }
+   ]
+  },
+  "SLES_022.93": {
+   "title": "Canal+ Premier Manager (Europe) (Fr,Es,It)",
+   "variants": [
+    {
+     "ppf": "SLES_022.93.PPF"
+    }
+   ]
+  },
+  "SLES_023.28": {
+   "title": "Galerians (Europe) (Disc 1)",
+   "variants": [
+    {
+     "ppf": "SLES_023.28.PPF"
+    }
+   ]
+  },
+  "SLES_023.29": {
+   "title": "Galerians (France) (Disc 1)",
+   "variants": [
+    {
+     "ppf": "SLES_023.29.PPF"
+    }
+   ]
+  },
+  "SLES_023.30": {
+   "title": "Galerians (Germany) (Disc 1)",
+   "variants": [
+    {
+     "ppf": "SLES_023.30.PPF"
+    }
+   ]
+  },
+  "SLES_023.54": {
+   "title": "Urban Chaos (France)",
+   "variants": [
+    {
+     "ppf": "SLES_023.54.PPF"
+    }
+   ]
+  },
+  "SLES_023.55": {
+   "title": "Urban Chaos (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_023.55.PPF"
+    }
+   ]
+  },
+  "SLES_023.95": {
+   "title": "Michelin Rally Masters: Race of Champions (Europe) (Fr,Es,It)",
+   "variants": [
+    {
+     "ppf": "SLES_023.95.PPF"
+    }
+   ]
+  },
+  "SLES_023.96": {
+   "title": "PGA European Tour Golf (Europe) (Fr, It, Es) / PGA European Tour Golf (Europe) (Fr, It, Es) (Alt)",
+   "variants": [
+    {
+     "check": [
+      171816,
+      83
+     ],
+     "ppf": "SLES_023.96.PPF",
+     "title": "PGA European Tour Golf (Europe) (Fr, It, Es)",
+     "unprotected": false
+    },
+    {
+     "check": [
+      171816,
+      204
+     ],
+     "ppf": "SLES_023.96_ALT.PPF",
+     "title": "PGA European Tour Golf (Europe) (Fr, It, Es) (Alt)",
+     "unprotected": false
+    }
+   ]
+  },
+  "SLES_024.02": {
+   "title": "M\u00e1nager de Liga (Spain) (Preproduction)",
+   "variants": [
+    {
+     "check": [
+      37736,
+      238
+     ],
+     "ppf": null,
+     "title": "This version of the game does not contain LibCrypt protection, no patching required.",
+     "unprotected": true
+    },
+    {
+     "check": [
+      37736,
+      241
+     ],
+     "ppf": "SLES_024.02.PPF",
+     "title": "",
+     "unprotected": false
+    }
+   ]
+  },
+  "SLES_025.29": {
+   "title": "Resident Evil 3: Nemesis (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_025.29.PPF"
+    }
+   ]
+  },
+  "SLES_025.30": {
+   "title": "Resident Evil 3: Nemesis (France)",
+   "variants": [
+    {
+     "ppf": "SLES_025.30.PPF"
+    }
+   ]
+  },
+  "SLES_025.31": {
+   "title": "Resident Evil 3: Nemesis (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_025.31.PPF"
+    }
+   ]
+  },
+  "SLES_025.32": {
+   "title": "Resident Evil 3: Nemesis (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_025.32.PPF"
+    }
+   ]
+  },
+  "SLES_025.33": {
+   "title": "Resident Evil 3: Nemesis (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_025.33.PPF"
+    }
+   ]
+  },
+  "SLES_025.38": {
+   "title": "EA Sports Superbike 2000 (Europe) (En,Fr,De,Es,It,Sv)",
+   "variants": [
+    {
+     "ppf": "SLES_025.38.PPF"
+    }
+   ]
+  },
+  "SLES_025.58": {
+   "title": "Parasite Eve II (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_X25.58.PPF"
+    }
+   ],
+   "disc": "Disc 1"
+  },
+  "SLES_025.59": {
+   "title": "Parasite Eve II (France)",
+   "variants": [
+    {
+     "ppf": "SLES_X25.59.PPF"
+    }
+   ],
+   "disc": "Disc 1"
+  },
+  "SLES_025.60": {
+   "title": "Parasite Eve II (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_X25.60.PPF"
+    }
+   ],
+   "disc": "Disc 1"
+  },
+  "SLES_025.61": {
+   "title": "Parasite Eve II (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_X25.61.PPF"
+    }
+   ],
+   "disc": "Disc 1"
+  },
+  "SLES_025.62": {
+   "title": "Parasite Eve II (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_X25.62.PPF"
+    }
+   ],
+   "disc": "Disc 1"
+  },
+  "SLES_025.63": {
+   "title": "Anstoss: Premier Manager (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_025.63.PPF"
+    }
+   ]
+  },
+  "SLES_025.72": {
+   "title": "TOCA World Touring Cars (Europe) (En,Fr,De)",
+   "variants": [
+    {
+     "ppf": "SLES_025.72.PPF"
+    }
+   ]
+  },
+  "SLES_025.73": {
+   "title": "TOCA World Touring Cars (Europe) (Es,It)",
+   "variants": [
+    {
+     "ppf": "SLES_025.73.PPF"
+    }
+   ]
+  },
+  "SLES_026.81": {
+   "title": "Ronaldo V-Football (En,Fr,De,Es,Nl,Sv) (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_026.81.PPF"
+    }
+   ]
+  },
+  "SLES_026.88": {
+   "title": "Theme Park World (Europe) (En,Fr,De,Es,It,Nl,Sv)",
+   "variants": [
+    {
+     "ppf": "SLES_026.88.PPF"
+    }
+   ]
+  },
+  "SLES_026.89": {
+   "title": "Need for Speed: Porsche 2000 (Europe) (En,De,Sv)",
+   "variants": [
+    {
+     "ppf": "SLES_026.89.PPF"
+    }
+   ]
+  },
+  "SLES_026.98": {
+   "title": "Resident Evil 3: Nemesis (Ireland)",
+   "variants": [
+    {
+     "ppf": "SLES_026.98.PPF"
+    }
+   ]
+  },
+  "SLES_027.00": {
+   "title": "Need for Speed: Porsche 2000 (Europe) (Fr,It,Es)",
+   "variants": [
+    {
+     "ppf": "SLES_027.00.PPF"
+    }
+   ]
+  },
+  "SLES_027.04": {
+   "title": "UEFA Euro 2000 (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_027.04.PPF"
+    }
+   ]
+  },
+  "SLES_027.05": {
+   "title": "UEFA Euro 2000 (France)",
+   "variants": [
+    {
+     "ppf": "SLES_027.05.PPF"
+    }
+   ]
+  },
+  "SLES_027.06": {
+   "title": "UEFA Euro 2000 (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_027.06.PPF"
+    }
+   ]
+  },
+  "SLES_027.07": {
+   "title": "UEFA Euro 2000 (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_027.07.PPF"
+    }
+   ]
+  },
+  "SLES_027.08": {
+   "title": "UEFA Euro 2000 (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_027.08.PPF"
+    }
+   ]
+  },
+  "SLES_027.22": {
+   "title": "F1 2000 (Europe) (En,Fr,De,Nl)",
+   "variants": [
+    {
+     "ppf": "SLES_027.22.PPF"
+    }
+   ]
+  },
+  "SLES_027.23": {
+   "title": "F1 2000 (Europe) (En,Es,Sv,Da,Fi)",
+   "variants": [
+    {
+     "ppf": "SLES_027.23.PPF"
+    }
+   ]
+  },
+  "SLES_027.24": {
+   "title": "F1 2000 (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_027.24.PPF"
+    }
+   ]
+  },
+  "SLES_027.33": {
+   "title": "Walt Disney World Quest: Magical Racing Tour (Europe) (En,Fr,De,Es,It,Nl,Sv,No,Da)",
+   "variants": [
+    {
+     "ppf": "SLES_027.33.PPF"
+    }
+   ]
+  },
+  "SLES_027.54": {
+   "title": "Vagrant Story (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_027.54.PPF"
+    }
+   ]
+  },
+  "SLES_027.55": {
+   "title": "Vagrant Story (France)",
+   "variants": [
+    {
+     "ppf": "SLES_027.55.PPF"
+    }
+   ]
+  },
+  "SLES_027.56": {
+   "title": "Vagrant Story (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_027.56.PPF"
+    }
+   ]
+  },
+  "SLES_027.63": {
+   "title": "SnoCross Championship Racing (Europe) (En,Fr,De,Es,It)",
+   "variants": [
+    {
+     "ppf": "SLES_027.63.PPF"
+    }
+   ]
+  },
+  "SLES_027.66": {
+   "title": "Les Cochons de Guerre  (France) Rev 0 / Les Cochons de Guerre  (France) (Rev 1) / Both version have same exact data track bin file, just different audio track checksums",
+   "variants": [
+    {
+     "ppf": "SLES_027.66.PPF"
+    }
+   ]
+  },
+  "SLES_027.67": {
+   "title": "Frontschweine (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_027.67.PPF"
+    }
+   ]
+  },
+  "SLES_027.68": {
+   "title": "Marranos en Guerra (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_027.68.PPF"
+    }
+   ]
+  },
+  "SLES_027.69": {
+   "title": "Hogs of War: Nati per Soffritto (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_027.69.PPF"
+    }
+   ]
+  },
+  "SLES_028.24": {
+   "title": "RC Revenge (Europe) (En,Fr,De,Es)",
+   "variants": [
+    {
+     "ppf": "SLES_028.24.PPF"
+    }
+   ]
+  },
+  "SLES_028.30": {
+   "title": "MoHo (Europe) (En,Fr,De,Es,It)",
+   "variants": [
+    {
+     "ppf": "SLES_028.30.PPF"
+    }
+   ]
+  },
+  "SLES_028.31": {
+   "title": "TechnoMage: Die R\u00fcckkehr der Ewigkeit (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_028.31.PPF"
+    }
+   ]
+  },
+  "SLES_028.39": {
+   "title": "Mike Tyson Boxing (Europe) (En,Fr,De,Es,It)",
+   "variants": [
+    {
+     "ppf": "SLES_028.39.PPF"
+    }
+   ]
+  },
+  "SLES_028.57": {
+   "title": "Sydney 2000 (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_028.57.PPF"
+    }
+   ]
+  },
+  "SLES_028.58": {
+   "title": "Sydney 2000 (France)",
+   "variants": [
+    {
+     "ppf": "SLES_028.58.PPF"
+    }
+   ]
+  },
+  "SLES_028.59": {
+   "title": "Sydney 2000 (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_028.59.PPF"
+    }
+   ]
+  },
+  "SLES_028.60": {
+   "title": "Sydney 2000 (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_028.60.PPF"
+    }
+   ]
+  },
+  "SLES_028.61": {
+   "title": "Sydney 2000 (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_028.61.PPF"
+    }
+   ]
+  },
+  "SLES_028.62": {
+   "title": "Sydney 2000 (Australia)",
+   "variants": [
+    {
+     "ppf": "SLES_028.62.PPF"
+    }
+   ]
+  },
+  "SLES_029.65": {
+   "title": "Final Fantasy IX (Disc 1) (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_029.65.PPF"
+    }
+   ]
+  },
+  "SLES_029.66": {
+   "title": "Final Fantasy IX (Disc 1) (France)",
+   "variants": [
+    {
+     "ppf": "SLES_029.66.PPF"
+    }
+   ]
+  },
+  "SLES_029.67": {
+   "title": "Final Fantasy IX (Disc 1) (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_029.67.PPF"
+    }
+   ]
+  },
+  "SLES_029.68": {
+   "title": "Final Fantasy IX (Disc 1) (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_029.68.PPF"
+    }
+   ]
+  },
+  "SLES_029.69": {
+   "title": "Final Fantasy IX (Disc 1) (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_029.69.PPF"
+    }
+   ]
+  },
+  "SLES_029.75": {
+   "title": "LMA Manager 2001 (Europe) / LMA Manager 2001 (Europe) (Beta 02/26/2001)",
+   "variants": [
+    {
+     "check": [
+      561398904,
+      129
+     ],
+     "ppf": "SLES_029.75.PPF",
+     "title": "LMA Manager 2001 (Europe)",
+     "unprotected": false
+    },
+    {
+     "check": [
+      561398904,
+      163
+     ],
+     "ppf": "SLES_029.75_BETA_2_26_2001.PPF",
+     "title": "LMA Manager 2001 (Europe) (Beta 02/26/2001)",
+     "unprotected": false
+    }
+   ]
+  },
+  "SLES_029.76": {
+   "title": "Roger Lemerre: La S\u00e9lection des Champions 2002 (France)",
+   "variants": [
+    {
+     "ppf": "SLES_029.76.PPF"
+    }
+   ]
+  },
+  "SLES_029.77": {
+   "title": "BDFL Manager 2001 (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_029.77.PPF"
+    }
+   ]
+  },
+  "SLES_029.78": {
+   "title": "Football Manager Campionato 2001 (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_029.78.PPF"
+    }
+   ]
+  },
+  "SLES_029.79": {
+   "title": "Manager de Liga 2001 (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_029.79.PPF"
+    }
+   ]
+  },
+  "SLES_030.61": {
+   "title": "The F.A. Premier League Football Manager 2001 (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_030.61.PPF"
+    }
+   ]
+  },
+  "SLES_030.62": {
+   "title": "Fussball Manager 2001 (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_030.62.PPF"
+    }
+   ]
+  },
+  "SLES_031.89": {
+   "title": "Disney's 102 Dalmatians: Puppies to the Rescue (Europe) (Fr,De,Es,It,Nl)",
+   "variants": [
+    {
+     "ppf": "SLES_031.89.PPF"
+    }
+   ]
+  },
+  "SLES_031.90": {
+   "title": "Disney's 102 Dalmatians: Puppies to the Rescue (Scandinavia)",
+   "variants": [
+    {
+     "ppf": "SLES_031.90.PPF"
+    }
+   ]
+  },
+  "SLES_031.91": {
+   "title": "Disney's 102 Dalmatians: Puppies to the Rescue (Europe) (Fr,De,Es,It,Nl)",
+   "variants": [
+    {
+     "ppf": "SLES_031.91.PPF"
+    }
+   ]
+  },
+  "SLES_032.41": {
+   "title": "TechnoMage: Return of Eternity (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_032.41.PPF"
+    }
+   ]
+  },
+  "SLES_032.42": {
+   "title": "TechnoMage: En Qu\u00eate de L'Eternit\u00e9 (France)",
+   "variants": [
+    {
+     "ppf": "SLES_032.42.PPF"
+    }
+   ]
+  },
+  "SLES_032.43": {
+   "title": "TechnoMage: Ritorno all'Eternit\u00e0 (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_032.43.PPF"
+    }
+   ]
+  },
+  "SLES_032.44": {
+   "title": "Technomage: El Retorno de la Eternidad (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_032.44.PPF"
+    }
+   ]
+  },
+  "SLES_032.45": {
+   "title": "TechnoMage: De Terugkeer der Eeuwigheid (Netherlands)",
+   "variants": [
+    {
+     "ppf": "SLES_032.45.PPF"
+    }
+   ]
+  },
+  "SLES_033.24": {
+   "title": "Asterix: Mega Madness (Europe) (En,Fr,De,Es,It,Nl)",
+   "variants": [
+    {
+     "ppf": "SLES_033.24.PPF"
+    }
+   ]
+  },
+  "SLES_034.89": {
+   "title": "Italian Job, The (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_034.89.PPF"
+    }
+   ]
+  },
+  "SLES_035.19": {
+   "title": "Men in Black: The Series: Crashdown (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_035.19.PPF"
+    }
+   ]
+  },
+  "SLES_035.20": {
+   "title": "Men in Black: The Series: Crashdown (France)",
+   "variants": [
+    {
+     "ppf": "SLES_035.20.PPF"
+    }
+   ]
+  },
+  "SLES_035.21": {
+   "title": "Men in Black: The Series: Crashdown (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_035.21.PPF"
+    }
+   ]
+  },
+  "SLES_035.22": {
+   "title": "Men in Black: The Series: Crashdown (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_035.22.PPF"
+    }
+   ]
+  },
+  "SLES_035.23": {
+   "title": "Men in Black: The Series: Crashdown (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_035.23.PPF"
+    }
+   ]
+  },
+  "SLES_035.30": {
+   "title": "Lucky Luke: Western Fever (Europe) (En,Fr,De,Es,It,Nl)",
+   "variants": [
+    {
+     "ppf": "SLES_035.30.PPF"
+    }
+   ]
+  },
+  "SLES_036.03": {
+   "title": "LMA Manager 2002 (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_036.03.PPF"
+    }
+   ]
+  },
+  "SLES_036.04": {
+   "title": "Roger Lemerre: La S\u00e9lection des Champions 2002 (France)",
+   "variants": [
+    {
+     "ppf": "SLES_036.04.PPF"
+    }
+   ]
+  },
+  "SLES_036.05": {
+   "title": "BDFL Manager 2002 (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_036.05.PPF"
+    }
+   ]
+  },
+  "SLES_036.06": {
+   "title": "Football Manager Campionato 2002 (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_036.06.PPF"
+    }
+   ]
+  },
+  "SLES_036.07": {
+   "title": "Manager de Liga 2002 (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_036.07.PPF"
+    }
+   ]
+  },
+  "SLES_036.26": {
+   "title": "Italian Job, The (Europe) (Fr,De,Es)",
+   "variants": [
+    {
+     "ppf": "SLES_036.26.PPF"
+    }
+   ]
+  },
+  "SLES_036.48": {
+   "title": "Italian Job, The (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_036.48.PPF"
+    }
+   ]
+  },
+  "SLES_118.79": {
+   "title": "OverBlood 2 (Europe) (Disc 2) (v1.0) / OverBlood 2 (Europe) (Disc 2) (v1.1)",
+   "variants": [
+    {
+     "check": [
+      37736,
+      248
+     ],
+     "ppf": "SLES_X18.79.PPF",
+     "title": "OverBlood 2 (Europe) (Disc 2) (v1.0)",
+     "unprotected": false
+    },
+    {
+     "check": [
+      37736,
+      247
+     ],
+     "ppf": null,
+     "title": "OverBlood 2 (Europe) (Disc 2) (v1.1) does not contain LibCrypt protection, nothing to patch!)",
+     "unprotected": true
+    }
+   ],
+   "disc": "Disc 2"
+  },
+  "SLES_118.80": {
+   "title": "OverBlood 2 (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_X18.80.PPF"
+    }
+   ]
+  },
+  "SLES_120.80": {
+   "title": "Final Fantasy VIII (Disc 2) (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_120.80.PPF"
+    }
+   ]
+  },
+  "SLES_120.81": {
+   "title": "Final Fantasy VIII (Disc 2) (France)",
+   "variants": [
+    {
+     "ppf": "SLES_120.81.PPF"
+    }
+   ]
+  },
+  "SLES_120.82": {
+   "title": "Final Fantasy VIII (Disc 1) (Germany) / Final Fantasy VIII (Disc 2) (Germany) / Final Fantasy VIII (Disc 3) (Germany) / Final Fantasy VIII (Disc 4) (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_X20.82.PPF"
+    }
+   ],
+   "disc": "Disc 2"
+  },
+  "SLES_120.83": {
+   "title": "Final Fantasy VIII (Disc 1) (Italy) / Final Fantasy VIII (Disc 2) (Italy) / Final Fantasy VIII (Disc 3) (Italy) / Final Fantasy VIII (Disc 4) (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_X20.83.PPF"
+    }
+   ],
+   "disc": "Disc 2"
+  },
+  "SLES_120.84": {
+   "title": "Final Fantasy VIII (Disc 2) (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_120.84.PPF"
+    }
+   ]
+  },
+  "SLES_123.28": {
+   "title": "Galerians (Europe) (Disc 2)",
+   "variants": [
+    {
+     "ppf": "SLES_123.28.PPF"
+    }
+   ]
+  },
+  "SLES_123.29": {
+   "title": "Galerians (France) (Disc 2)",
+   "variants": [
+    {
+     "ppf": "SLES_123.29.PPF"
+    }
+   ]
+  },
+  "SLES_123.30": {
+   "title": "Galerians (Germany) (Disc 2)",
+   "variants": [
+    {
+     "ppf": "SLES_123.30.PPF"
+    }
+   ]
+  },
+  "SLES_125.58": {
+   "title": "Parasite Eve II (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_X25.58.PPF"
+    }
+   ],
+   "disc": "Disc 2"
+  },
+  "SLES_125.59": {
+   "title": "Parasite Eve II (France)",
+   "variants": [
+    {
+     "ppf": "SLES_X25.59.PPF"
+    }
+   ],
+   "disc": "Disc 2"
+  },
+  "SLES_125.60": {
+   "title": "Parasite Eve II (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_X25.60.PPF"
+    }
+   ],
+   "disc": "Disc 2"
+  },
+  "SLES_125.61": {
+   "title": "Parasite Eve II (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_X25.61.PPF"
+    }
+   ],
+   "disc": "Disc 2"
+  },
+  "SLES_125.62": {
+   "title": "Parasite Eve II (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_X25.62.PPF"
+    }
+   ],
+   "disc": "Disc 2"
+  },
+  "SLES_129.65": {
+   "title": "Final Fantasy IX (Disc 2) (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_129.65.PPF"
+    }
+   ]
+  },
+  "SLES_129.66": {
+   "title": "Final Fantasy IX (Disc 2) (France)",
+   "variants": [
+    {
+     "ppf": "SLES_129.66.PPF"
+    }
+   ]
+  },
+  "SLES_129.67": {
+   "title": "Final Fantasy IX (Disc 2) (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_129.67.PPF"
+    }
+   ]
+  },
+  "SLES_129.68": {
+   "title": "Final Fantasy IX (Disc 2) (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_129.68.PPF"
+    }
+   ]
+  },
+  "SLES_129.69": {
+   "title": "Final Fantasy IX (Disc 2) (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_129.69.PPF"
+    }
+   ]
+  },
+  "SLES_220.80": {
+   "title": "Final Fantasy VIII (Disc 3) (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_220.80.PPF"
+    }
+   ]
+  },
+  "SLES_220.81": {
+   "title": "Final Fantasy VIII (Disc 3) (France)",
+   "variants": [
+    {
+     "ppf": "SLES_220.81.PPF"
+    }
+   ]
+  },
+  "SLES_220.82": {
+   "title": "Final Fantasy VIII (Disc 1) (Germany) / Final Fantasy VIII (Disc 2) (Germany) / Final Fantasy VIII (Disc 3) (Germany) / Final Fantasy VIII (Disc 4) (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_X20.82.PPF"
+    }
+   ],
+   "disc": "Disc 3"
+  },
+  "SLES_220.83": {
+   "title": "Final Fantasy VIII (Disc 1) (Italy) / Final Fantasy VIII (Disc 2) (Italy) / Final Fantasy VIII (Disc 3) (Italy) / Final Fantasy VIII (Disc 4) (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_X20.83.PPF"
+    }
+   ],
+   "disc": "Disc 3"
+  },
+  "SLES_220.84": {
+   "title": "Final Fantasy VIII (Disc 3) (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_220.84.PPF"
+    }
+   ]
+  },
+  "SLES_223.28": {
+   "title": "Galerians (Europe) (Disc 2)",
+   "variants": [
+    {
+     "ppf": "SLES_223.28.PPF"
+    }
+   ]
+  },
+  "SLES_223.29": {
+   "title": "Galerians (France) (Disc 3)",
+   "variants": [
+    {
+     "ppf": "SLES_223.29.PPF"
+    }
+   ]
+  },
+  "SLES_223.30": {
+   "title": "Galerians (Germany) (Disc 3)",
+   "variants": [
+    {
+     "ppf": "SLES_223.30.PPF"
+    }
+   ]
+  },
+  "SLES_229.65": {
+   "title": "Final Fantasy IX (Disc 3) (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_229.65.PPF"
+    }
+   ]
+  },
+  "SLES_229.66": {
+   "title": "Final Fantasy IX (Disc 3) (France)",
+   "variants": [
+    {
+     "ppf": "SLES_229.66.PPF"
+    }
+   ]
+  },
+  "SLES_229.67": {
+   "title": "Final Fantasy IX (Disc 3) (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_229.67.PPF"
+    }
+   ]
+  },
+  "SLES_229.68": {
+   "title": "Final Fantasy IX (Disc 3) (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_229.68.PPF"
+    }
+   ]
+  },
+  "SLES_229.69": {
+   "title": "Final Fantasy IX (Disc 3) (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_229.69.PPF"
+    }
+   ]
+  },
+  "SLES_320.80": {
+   "title": "Final Fantasy VIII (Disc 4) (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_320.80.PPF"
+    }
+   ]
+  },
+  "SLES_320.81": {
+   "title": "Final Fantasy VIII (Disc 4) (France)",
+   "variants": [
+    {
+     "ppf": "SLES_320.81.PPF"
+    }
+   ]
+  },
+  "SLES_320.82": {
+   "title": "Final Fantasy VIII (Disc 1) (Germany) / Final Fantasy VIII (Disc 2) (Germany) / Final Fantasy VIII (Disc 3) (Germany) / Final Fantasy VIII (Disc 4) (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_X20.82.PPF"
+    }
+   ],
+   "disc": "Disc 4"
+  },
+  "SLES_320.83": {
+   "title": "Final Fantasy VIII (Disc 1) (Italy) / Final Fantasy VIII (Disc 2) (Italy) / Final Fantasy VIII (Disc 3) (Italy) / Final Fantasy VIII (Disc 4) (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_X20.83.PPF"
+    }
+   ],
+   "disc": "Disc 4"
+  },
+  "SLES_320.84": {
+   "title": "Final Fantasy VIII (Disc 4) (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_320.84.PPF"
+    }
+   ]
+  },
+  "SLES_329.65": {
+   "title": "Final Fantasy IX (Disc 4) (Europe)",
+   "variants": [
+    {
+     "ppf": "SLES_329.65.PPF"
+    }
+   ]
+  },
+  "SLES_329.66": {
+   "title": "Final Fantasy IX (Disc 4) (France)",
+   "variants": [
+    {
+     "ppf": "SLES_329.66.PPF"
+    }
+   ]
+  },
+  "SLES_329.67": {
+   "title": "Final Fantasy IX (Disc 4) (Germany)",
+   "variants": [
+    {
+     "ppf": "SLES_329.67.PPF"
+    }
+   ]
+  },
+  "SLES_329.68": {
+   "title": "Final Fantasy IX (Disc 4) (Italy)",
+   "variants": [
+    {
+     "ppf": "SLES_329.68.PPF"
+    }
+   ]
+  },
+  "SLES_329.69": {
+   "title": "Final Fantasy IX (Disc 4) (Spain)",
+   "variants": [
+    {
+     "ppf": "SLES_329.69.PPF"
+    }
+   ]
+  }
+ }
+}

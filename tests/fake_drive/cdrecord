@@ -1,0 +1,134 @@
+#!/usr/bin/env python3
+"""Fake cdrecord for tests: a TAO CD-R "drive" whose disc lives in $FAKE_DRIVE_DIR.
+
+Implements just what dcburn uses (-minfo, -prcap, -msinfo, -atip, -toc and TAO writes
+with -audio/-data/-xa/-multi/-dummy), printing the same lines as cdrtools 3.02.
+Data sectors are stored in disc.bin at LBA*2048; the layout follows TAO rules
+(2 run-out blocks per track, lead-out 6750/2250 + lead-in 4500 + pregap 150).
+Knobs in state.json: busy_fail (fail N write attempts as "busy"), extra_gap (shift the
+next session's start, like a misbehaving drive).
+"""
+import json
+import os
+import sys
+
+D = os.environ["FAKE_DRIVE_DIR"]
+STATE = os.path.join(D, "state.json")
+CAPACITY = 359846
+
+
+def load():
+    if os.path.exists(STATE):
+        with open(STATE) as f:
+            return json.load(f)
+    return {"tracks": [], "sessions": 0, "closed": False, "nwa": 0, "busy_fail": 0, "extra_gap": 0,
+            "calls": []}
+
+
+def save(st):
+    with open(STATE, "w") as f:
+        json.dump(st, f)
+
+
+st = load()
+args = sys.argv[1:]
+st["calls"].append(args)
+save(st)
+print("Cdrecord-ProDVD-ProBD-Clone 3.02a09 (fake) Copyright (C) 1995-2016 Joerg Schilling")
+print("cdrecord: Permission denied. WARNING: Cannot set priority using setpriority().")
+
+MEDIA = st.get("media", "CD-R")
+if MEDIA.startswith("DVD"):
+    CAPACITY = st.get("dvd_free", 2295104)
+if "-minfo" in args:
+    print(f"Mounted media class:      {'DVD' if MEDIA.startswith('DVD') else 'CD'}\n"
+          f"Mounted media type:       {MEDIA}\nDisk Is {'' if 'RW' in MEDIA else 'not '}erasable")
+    if st["closed"]:
+        print("disk status:              complete")
+    elif st["tracks"]:
+        print("disk status:              incomplete/appendable")
+        print(f"Next writable address:              {st['nwa']}")
+        print(f"Remaining writable size:            {CAPACITY - st['nwa']}")
+    else:
+        print("disk status:              empty\nsession status:           empty")
+        print("Next writable address:              0")
+        print(f"Remaining writable size:            {CAPACITY}")
+    sys.exit(0)
+if "-prcap" in args:
+    print("  Does write CD-R media")
+    for i, x in enumerate((48, 24, 16, 10)):
+        print(f"  Write speed # {i}: {x * 176:5d} kB/s CLV/PCAV (CD {x:3d}x, DVD {x * 176 // 1385:2d}x, BD  0x)")
+    sys.exit(0)
+if "-msinfo" in args:
+    if not st["tracks"] or st["closed"]:
+        print("cdrecord: Cannot read session offset.", file=sys.stderr)
+        sys.exit(255)
+    last = [t for t in st["tracks"] if t["session"] == st["sessions"]][0]["lba"]
+    print(f"{last},{st['nwa']}")
+    sys.exit(0)
+if "-atip" in args or "-toc" in args:
+    sys.exit(0)
+
+# ---- writing
+if st["busy_fail"] > 0:
+    st["busy_fail"] -= 1
+    save(st)
+    print("cdrecord: Device or resource busy. Cannot open or use SCSI driver.", file=sys.stderr)
+    sys.exit(255)
+if st["closed"]:
+    print("cdrecord: Cannot write to a closed disc.", file=sys.stderr)
+    sys.exit(255)
+multi = "-multi" in args
+dummy = "-dummy" in args
+speed = next((a.split("=")[1] for a in args if a.startswith("speed=")), "48")
+tracks, mode = [], None
+for a in args:
+    if a in ("-audio", "-data", "-xa"):
+        mode = a[1:]
+    elif not a.startswith("-") and "=" not in a and os.path.isfile(a):
+        tracks.append((mode, a))
+print(f"Starting to write CD/DVD/BD at speed {speed} in {'dummy' if dummy else 'real'} TAO mode for "
+      f"{'multi' if multi else 'single'} session.")
+print("Last chance to quit, starting real write in    3 seconds.")
+lba = st["nwa"]
+session = st["sessions"] + 1
+new = []
+for i, (mode, path) in enumerate(tracks):
+    size = os.path.getsize(path)
+    if mode == "audio":
+        with open(path, "rb") as f:
+            assert f.read(4) == b"RIFF", "audio must be a WAV"
+        sectors = (size - 44) // 2352
+        assert (size - 44) % 2352 == 0
+    else:
+        assert size % 2048 == 0, "data must be whole 2048-byte sectors"
+        sectors = size // 2048
+    if i:
+        lba += 150
+    print(f"Starting new track at sector: {lba}")
+    if not dummy and mode != "audio":
+        with open(path, "rb") as src, open(os.path.join(D, "disc.bin"), "r+b" if os.path.exists(
+                os.path.join(D, "disc.bin")) else "wb") as disc:
+            disc.seek(lba * 2048)
+            while True:
+                chunk = src.read(1 << 20)
+                if not chunk:
+                    break
+                disc.write(chunk)
+    mb = size >> 20
+    for k in range(0, mb + 1, max(1, mb // 4 or 1)):
+        sys.stdout.write(f"\rTrack {len(st['tracks']) + i + 1:02d}: {k:4d} of {mb:4d} MB written "
+                         f"(fifo 100%) [buf  99%]  {float(speed):5.1f}x.")
+    print()
+    new.append({"lba": lba, "sectors": sectors, "mode": mode, "session": session})
+    lba += sectors + 2
+print("Fixating...")
+print("Fixating time:    1.000s")
+if not dummy:
+    st["tracks"] += new
+    st["sessions"] = session
+    gap = (6750 if session == 1 else 2250) + 4500 + 150
+    st["nwa"] = lba + gap + st.get("extra_gap", 0)
+    st["closed"] = not multi
+save(st)
+sys.exit(0)

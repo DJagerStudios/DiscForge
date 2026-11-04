@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "discforge"
+dynamic = ["version"]
+description = "One-click CD/DVD burner for retro console games, homebrew and software"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "DJagerStudios" }]
+dependencies = ["numpy>=1.21", "PySide6>=6.5", "lz4>=3"]
+classifiers = [
+    "Environment :: X11 Applications :: Qt",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: POSIX :: BSD :: FreeBSD",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "Programming Language :: Python :: 3",
+    "Topic :: Multimedia :: Sound/Audio :: CD Audio :: CD Writing",
+]
+
+[project.urls]
+Homepage = "https://github.com/DJagerStudios/DiscForge"
+Issues = "https://github.com/DJagerStudios/DiscForge/issues"
+
+[project.scripts]
+discforge = "discforge.cli:main"
+
+[project.gui-scripts]
+discforge-gui = "discforge.gui.app:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "discforge.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["discforge*"]
+
+[tool.setuptools.package-data]
+discforge = ["data/**/*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B"]
+ignore = ["B905"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501", "E402"]

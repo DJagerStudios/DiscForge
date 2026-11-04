@@ -1,0 +1,150 @@
+name: CI
+
+# Every push and pull request: lint, then the test suite on Linux (oldest and newest supported
+# Python), macOS, Windows and FreeBSD, with the GUI checks where a simulated drive can run.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.10"
+      - name: Ruff
+        run: pip install ruff==0.17.3 && ruff check discforge tests packaging tools
+      - name: Python 3.10 syntax
+        run: python -m compileall -q discforge packaging tests tools
+      - name: Shell scripts
+        run: |
+          shellcheck install.sh packaging/tools/linux.sh packaging/tools/macos.sh
+          python3 - <<'EOF'
+          import importlib.util, subprocess, tempfile, os
+          spec = importlib.util.spec_from_file_location("build", "packaging/build.py")
+          b = importlib.util.module_from_spec(spec); spec.loader.exec_module(b)
+          d = tempfile.mkdtemp()
+          paths = []
+          for name in ("FREEBSD_INSTALL", "FREEBSD_LAUNCHER", "LINUX_INSTALL"):
+              p = os.path.join(d, name + ".sh"); open(p, "w").write(getattr(b, name)); paths.append(p)
+          subprocess.run(["shellcheck", "-s", "sh", *paths], check=True)
+          EOF
+
+  linux:
+    name: Linux (Python ${{ matrix.python }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-22.04, python: "3.10" }
+          - { os: ubuntu-24.04, python: "3.13" }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: System packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends build-essential m4 patchelf mame-tools \
+            libegl1 libgl1 libxkbcommon0 libfontconfig1 libdbus-1-3
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: build/tools
+          key: tools-${{ matrix.os }}-${{ hashFiles('packaging/tools/linux.sh') }}
+      - name: Burning tools (the ones the downloads bundle)
+        run: |
+          [ -x build/tools/bin/cdrecord ] || bash packaging/tools/linux.sh build/tools build/tool-sources
+          echo "$PWD/build/tools/bin" >> "$GITHUB_PATH"
+      - name: Python packages
+        run: pip install -r packaging/requirements-test.txt
+      - name: Unit tests
+        run: python -W error::ResourceWarning -m unittest discover -s tests -v
+      - name: GUI smoke test (simulated drive)
+        run: QT_QPA_PLATFORM=offscreen python tests/gui_smoke.py
+      - name: UI layout check (every page, size and theme)
+        run: QT_QPA_PLATFORM=offscreen python tests/ui_check.py build/ui-shots
+      - name: Self-test and doctor
+        run: |
+          QT_QPA_PLATFORM=offscreen python -c "import sys; sys.argv=['DiscForge','--self-test']; from discforge.gui.app import main; sys.exit(main())"
+          python -m discforge doctor
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: ui-shots-${{ matrix.os }}
+          path: build/ui-shots
+          if-no-files-found: ignore
+          retention-days: 7
+
+  macos:
+    name: macOS
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: Packages
+        run: |
+          brew install cdrtools
+          pip install -r packaging/requirements-test.txt
+      - name: Unit tests
+        run: python -W error::ResourceWarning -m unittest discover -s tests -v
+      - name: GUI smoke test (simulated drive)
+        run: QT_QPA_PLATFORM=offscreen python tests/gui_smoke.py
+      - name: Self-test and doctor
+        run: |
+          QT_QPA_PLATFORM=offscreen python -c "import sys; sys.argv=['DiscForge','--self-test']; from discforge.gui.app import main; sys.exit(main())"
+          python -m discforge doctor
+
+  windows:
+    name: Windows
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.13"
+      - name: Packages
+        run: pip install -r packaging/requirements-test.txt
+      - name: Unit tests
+        run: python -W error::ResourceWarning -m unittest discover -s tests -v
+      - name: Self-test and doctor
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          python -c "import sys; sys.argv=['DiscForge','--self-test']; from discforge.gui.app import main; sys.exit(main())"
+          python -m discforge doctor
+
+  freebsd:
+    name: FreeBSD
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: vmactions/freebsd-vm@c46abacb49f09938ca4e1702d15d836285d694cc # v1.5.9
+        with:
+          release: "14.3"
+          copyback: false
+          prepare: |
+            pkg install -y python3 python312 py312-pyside6 py312-numpy py312-lz4 cdrtools cdrdao dvd+rw-tools
+          run: |
+            set -e
+            export XDG_CONFIG_HOME=$(mktemp -d) XDG_CACHE_HOME=$(mktemp -d) QT_QPA_PLATFORM=offscreen
+            python3.12 -W error::ResourceWarning -m unittest discover -s tests -v
+            python3.12 tests/gui_smoke.py
+            python3.12 -c "import sys; sys.argv=['DiscForge','--self-test']; from discforge.gui.app import main; sys.exit(main())"
+            python3.12 -m discforge doctor

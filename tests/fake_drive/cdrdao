@@ -1,0 +1,148 @@
+#!/usr/bin/env python3
+"""Fake cdrdao for tests: a DAO CD-R "drive" whose disc lives in $FAKE_DRIVE_DIR.
+
+Parses the TOC files DiscForge writes, lays tracks out like cdrdao (track 1 at LBA 0, PREGAP /
+START gaps), stores raw sectors in disc.raw (LBA*2352) and cooked user data in disc.user
+(LBA*2048), and records the resulting TOC in state.json["cd_toc"].
+Knobs: raw_unsupported (fail generic-mmc-raw setup), busy_fail (N attempts fail as busy),
+write_error (fail midway).
+"""
+import json
+import os
+import re
+import sys
+
+D = os.environ["FAKE_DRIVE_DIR"]
+STATE = os.path.join(D, "state.json")
+with open(STATE) as f:
+    st = json.load(f)
+args = sys.argv[1:]
+st.setdefault("calls", []).append(["cdrdao"] + args)
+
+
+def save():
+    with open(STATE, "w") as f:
+        json.dump(st, f)
+
+
+def msf(s):
+    m, sec, fr = (int(x) for x in s.split(":"))
+    return (m * 60 + sec) * 75 + fr
+
+
+save()
+print(f"Cdrdao version {st.get('version', '1.2.6')} - (C) Andreas Mueller (fake)", file=sys.stderr)
+if not args:
+    sys.exit(1)
+cmd = args[0]
+opt = lambda k: args[args.index(k) + 1] if k in args else None
+driver, swap, toc = opt("--driver"), "--swap" in args, args[-1]
+if st.get("busy_fail", 0) > 0:
+    st["busy_fail"] -= 1
+    save()
+    print("ERROR: Cannot setup device /dev/sr0: Device or resource busy", file=sys.stderr)
+    sys.exit(1)
+if driver == "generic-mmc-raw" and st.get("raw_unsupported"):
+    print("ERROR: Cannot setup disk-at-once writing for this drive.", file=sys.stderr)
+    sys.exit(1)
+if st.get("closed"):
+    print("ERROR: Medium in recorder device is not empty and not appendable.", file=sys.stderr)
+    sys.exit(1)
+
+tracks, cur = [], None
+for line in open(toc):
+    line = line.split("//")[0].strip()
+    if not line:
+        continue
+    if line.startswith("TRACK"):
+        cur = {"mode": line.split()[1], "pregap": 0, "start": 0, "parts": []}
+        tracks.append(cur)
+    elif cur is None:
+        continue
+    elif line.startswith("PREGAP"):
+        cur["pregap"] = msf(line.split()[1])
+    elif line.startswith("START"):
+        cur["start"] = msf(line.split()[1])
+    elif line.startswith(("ZERO", "SILENCE")):
+        cur["parts"].append(("zero", None, 0, msf(line.split()[1])))
+    elif line.startswith(("DATAFILE", "FILE")):
+        m = re.match(r'(DATAFILE|FILE)\s+"([^"]+)"\s*(#(\d+))?\s*(\S+)?\s*(\S+)?', line)
+        kind, path, off = m.group(1), m.group(2), int(m.group(4) or 0)
+        if kind == "DATAFILE":
+            length = msf(m.group(5)) if m.group(5) else None
+        else:
+            if path.endswith(".wav") and swap:
+                print("ERROR: WAVE file used with --swap (would be noise)", file=sys.stderr)
+                sys.exit(1)
+            start = msf(m.group(5)) if ":" in (m.group(5) or "") else int(m.group(5) or 0)
+            off += start * 2352 + (44 if path.endswith(".wav") else 0)
+            length = msf(m.group(6)) if m.group(6) else None
+        ss = 2048 if cur["mode"] in ("MODE1", "MODE2_FORM1") else 2352
+        if length is None:
+            length = (os.path.getsize(path) - off) // ss
+        if os.path.getsize(path) < off + length * ss:
+            print(f'ERROR: Track {len(tracks)}: Requested length exceeds length of file "{path}"', file=sys.stderr)
+            sys.exit(1)
+        cur["parts"].append(("file", path, off, length))
+total = sum(t["pregap"] + sum(p[3] for p in t["parts"]) for t in tracks)
+
+
+def msf_text(n):
+    return f"{n // 4500:02d}:{n // 75 % 60:02d}:{n % 75:02d}({n:6d})"
+
+
+if cmd == "show-toc":                    # read-only, like the real one: print the layout
+    lba = 0
+    for i, t in enumerate(tracks):
+        lba += t["pregap"]
+        length = sum(p[3] for p in t["parts"])
+        print(f"TRACK {i + 1:2d}  Mode {t['mode']}:")
+        print(f"          START  {msf_text(lba + t['start'])}")
+        lba += length
+        print(f"          END    {msf_text(lba)}")
+    sys.exit(0)
+print(f"Starting write at speed {opt('--speed') or 0}...", file=sys.stderr)
+print("Writing lead-in and gap...", file=sys.stderr)
+lba, toc_out = 0, []
+dummy = cmd == "simulate"
+raw_f = open(os.path.join(D, "disc.raw"), "r+b" if os.path.exists(os.path.join(D, "disc.raw")) else "wb")
+user_f = open(os.path.join(D, "disc.user"), "r+b" if os.path.exists(os.path.join(D, "disc.user")) else "wb")
+written = 0
+for i, t in enumerate(tracks):
+    lba += t["pregap"]          # like real cdrdao: PREGAP (also on track 1) is in the program area
+    track_lba = lba
+    toc_out.append([i + 1, track_lba + t["start"], t["mode"] != "AUDIO"])
+    print(f"Writing track {i + 1:02d} (mode {t['mode']}/{t['mode']})...", file=sys.stderr)
+    for kind, path, off, length in t["parts"]:
+        ss = 2048 if t["mode"] in ("MODE1", "MODE2_FORM1") else 2352
+        if kind == "file" and not dummy:
+            with open(path, "rb") as src:
+                src.seek(off)
+                data = src.read(length * ss)
+            if t["mode"] == "AUDIO" and not swap and not path.endswith(".wav"):
+                data = bytes(b for pair in zip(data[1::2], data[0::2]) for b in pair)   # big-endian input
+            if ss == 2048:
+                user_f.seek(lba * 2048)
+                user_f.write(data)
+            else:
+                raw_f.seek(lba * 2352)
+                raw_f.write(data)
+        lba += length
+        written += length
+        if st.get("write_error") and written > total // 2:
+            print("ERROR: Write data failed.", file=sys.stderr)
+            sys.exit(1)
+        sys.stderr.write(f"Wrote {written * 2352 >> 20} of {total * 2352 >> 20} MB (Buffers 100%  98%).\r")
+print(file=sys.stderr)
+print("Writing lead-out...", file=sys.stderr)
+print("Flushing cache...", file=sys.stderr)
+if dummy:
+    print("Simulation finished successfully.", file=sys.stderr)
+else:
+    st["cd_toc"] = toc_out + [[0xAA, lba, True]]
+    st["closed"] = True
+    st["tracks"] = [{"lba": 0, "sectors": lba, "mode": "dao", "session": 1}]
+    st["swap_used"] = swap
+    st["driver_used"] = driver
+    print("Writing finished successfully.", file=sys.stderr)
+save()

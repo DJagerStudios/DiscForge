@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+"""Fake growisofs: copies the image into the fake device file, prints growisofs-style progress.
+Knobs: write_error (fail midway)."""
+import json
+import os
+import shutil
+import sys
+
+D = os.environ["FAKE_DRIVE_DIR"]
+STATE = os.path.join(D, "state.json")
+with open(STATE) as f:
+    st = json.load(f)
+args = sys.argv[1:]
+st.setdefault("calls", []).append(["growisofs"] + args)
+with open(STATE, "w") as f:
+    json.dump(st, f)
+z = args[args.index("-Z") + 1]
+dev, img = z.split("=", 1)
+size = os.path.getsize(img)
+blocks = size // 2048
+free = st.get("dvd_free", 2295104)
+if blocks > free:
+    print(f":-( {dev}: {free} blocks are free, {blocks} to be written!")
+    sys.exit(1)
+dummy = "-use-the-force-luke=dummy" in args
+print(f"Executing 'builtin_dd if={img} of={dev} obs=32k seek=0'")
+step = max(1, size // 5)
+with open(img, "rb") as src, open(dev, "wb") as out:
+    pos = 0
+    while pos < size:
+        chunk = src.read(min(step, size - pos))
+        if not dummy:
+            out.write(chunk)
+        pos += len(chunk)
+        if st.get("write_error") and pos > size // 2:
+            print(":-[ WRITE@LBA=1234h failed with SK=3h/ASC=0Ch/ACQ=00h]: Input/output error")
+            print(":-( write failed: Input/output error")
+            sys.exit(1)
+        print(f"{pos:11d}/{size} ({100 * pos / size:4.1f}%) @4.0x, remaining 0:{max(0, 5 - pos // step):02d} RBU 100.0% UBU  99.8%")
+if not dummy and size % 2048:
+    with open(dev, "ab") as out:                     # real drives write whole sectors
+        out.write(bytes(-size % 2048))
+print(f"builtin_dd: {blocks}*2KB out @ average 4.0x1352KBps")
+print(f"{dev}: flushing cache")
+print(f"{dev}: closing track")
+print(f"{dev}: closing disc")
+print(f"{dev}: reloading tray")
+if not dummy:
+    with open(STATE) as f:
+        st = json.load(f)
+    st["closed"] = True
+    with open(STATE, "w") as f:
+        json.dump(st, f)

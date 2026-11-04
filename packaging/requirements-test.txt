@@ -1,0 +1,4 @@
+# What the test suite needs when DiscForge runs from source (any Python 3.10+).
+PySide6-Essentials>=6.5
+numpy>=1.21
+lz4>=3

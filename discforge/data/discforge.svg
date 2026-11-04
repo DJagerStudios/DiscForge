@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1C2030"/>
+      <stop offset="1" stop-color="#07080C"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FF6A2B" stop-opacity="0.55"/>
+      <stop offset="0.6" stop-color="#FF2E7E" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#FF2E7E" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="0.2" y1="0.05" x2="0.8" y2="0.95">
+      <stop offset="0" stop-color="#FFC14D"/>
+      <stop offset="0.42" stop-color="#FF6A2B"/>
+      <stop offset="1" stop-color="#FF2E7E"/>
+    </linearGradient>
+    <radialGradient id="disc" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0.30" stop-color="#DDE3EE"/>
+      <stop offset="0.72" stop-color="#9AA5BA"/>
+      <stop offset="0.96" stop-color="#E9EEF6"/>
+      <stop offset="1" stop-color="#FFFFFF"/>
+    </radialGradient>
+    <linearGradient id="sheenA" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4CC9F0" stop-opacity="0.75"/>
+      <stop offset="0.48" stop-color="#B388FF" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#06D6A0" stop-opacity="0.65"/>
+    </linearGradient>
+    <linearGradient id="sheenB" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFD166" stop-opacity="0.70"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="1" stop-color="#FF4D6D" stop-opacity="0.60"/>
+    </linearGradient>
+    <linearGradient id="streak" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0.40" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.48" stop-color="#FFFFFF" stop-opacity="0.45"/>
+      <stop offset="0.54" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="spark" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.35" stop-color="#FFC14D" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#FF6A2B" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="8" y="8" width="240" height="240" rx="58" fill="url(#bg)"/>
+  <rect x="8.75" y="8.75" width="238.5" height="238.5" rx="57.25" fill="none" stroke="#FFFFFF" stroke-opacity="0.09" stroke-width="1.5"/>
+  <circle cx="128" cy="128" r="116" fill="url(#glow)"/>
+  <circle cx="128" cy="128" r="68" fill="url(#disc)"/>
+  <circle cx="128" cy="128" r="68" fill="url(#sheenA)"/>
+  <circle cx="128" cy="128" r="68" fill="url(#sheenB)"/>
+  <circle cx="128" cy="128" r="68" fill="url(#streak)"/>
+  <circle cx="128" cy="128" r="24" fill="#0E1118" stroke="#FFFFFF" stroke-opacity="0.75" stroke-width="2.5"/>
+  <circle cx="128" cy="128" r="15" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="2"/>
+  <circle cx="128" cy="128" r="8" fill="#07080C" stroke="#FFFFFF" stroke-opacity="0.45" stroke-width="2"/>
+  <circle cx="128" cy="128" r="86" fill="none" stroke="url(#ring)" stroke-width="17"/>
+  <circle cx="190" cy="66" r="22" fill="url(#spark)"/>
+  <path d="M190 48 L194 62 L208 66 L194 70 L190 84 L186 70 L172 66 L186 62 Z" fill="#FFFFFF"/>
+</svg>

@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+"""Fake readcd for tests: reads 2048-byte sectors back from the fake drive's disc.bin."""
+import os
+import sys
+
+D = os.environ["FAKE_DRIVE_DIR"]
+rng = next(a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("sectors="))
+start, end = (int(x) for x in rng.split("-"))
+with open(os.path.join(D, "disc.bin"), "rb") as f:
+    f.seek(start * 2048)
+    data = f.read((end - start) * 2048)
+if len(data) != (end - start) * 2048:
+    print("readcd: read past the end of the disc", file=sys.stderr)
+    sys.exit(255)
+sys.stdout.buffer.write(data)

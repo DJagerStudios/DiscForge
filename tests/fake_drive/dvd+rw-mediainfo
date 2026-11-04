@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+import json, os, sys
+st = json.load(open(os.path.join(os.environ["FAKE_DRIVE_DIR"], "state.json")))
+media = st.get("media", "CD-R")
+if not media.startswith("DVD"):
+    print(":-( non-DVD media mounted, exiting...")
+    sys.exit(1)
+names = {"DVD-R": "11h, DVD-R Sequential", "DVD+R": "1Bh, DVD+R", "DVD+R/DL": "2Bh, DVD+R Double Layer",
+         "DVD-RW": "14h, DVD-RW Sequential", "DVD+RW": "1Ah, DVD+RW"}
+print(f"INQUIRY:                [FAKE    ][DVDRW FAKE      ][1.00]")
+print("GET [CURRENT] CONFIGURATION:")
+print(f" Mounted Media:         {names[media]}")
+for i, s in enumerate((4.0, 8.0, 16.0) if "DL" not in media else (2.4, 4.0, 8.0)):
+    print(f" Write Speed #{i}:        {s:.1f}x1385={int(s * 1385)}KB/s")
+print("READ DISC INFORMATION:")
+print(f" Disc status:           {'complete' if st.get('closed') else 'blank'}")
+print("READ TRACK INFORMATION[#1]:")
+print(f" Free Blocks:           {st.get('dvd_free', 2295104)}*2KB")

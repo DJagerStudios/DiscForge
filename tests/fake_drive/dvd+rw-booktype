@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+import json, os, sys
+p = os.path.join(os.environ["FAKE_DRIVE_DIR"], "state.json")
+st = json.load(open(p))
+st.setdefault("calls", []).append(["dvd+rw-booktype"] + sys.argv[1:])
+json.dump(st, open(p, "w"))
