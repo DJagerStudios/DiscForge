@@ -79,10 +79,13 @@ tar -xjf "$f" -C "$WORK"
 #endif/' inc/avoffset.c
   grep -q "SIGTRAP, handler" inc/avoffset.c
   # The Schily defaults add -I/usr/local/include and -L/usr/local/lib, where Homebrew lives on Intel
-  # Macs, so its gettext got linked in.  Build against the SDK only.
-  for d in DEFAULTS/Defaults.mac-os10 DEFAULTS_ENG/Defaults.mac-os10; do
-    sed -i '' -e 's|^DEFOSINCDIRS=.*|DEFOSINCDIRS=|' -e 's|^LDPATH=.*|LDPATH=|' "$d"
+  # Macs, so its gettext got linked in.  Build against the SDK only, and tell configure up front that
+  # there's no libintl (macOS has none of its own).
+  for d in DEFAULTS/Defaults.darwin DEFAULTS/Defaults.mac-os10 DEFAULTS_ENG/Defaults.darwin \
+           DEFAULTS_ENG/Defaults.mac-os10; do
+    [ -f "$d" ] && sed -i '' -e 's|^DEFOSINCDIRS=.*|DEFOSINCDIRS=|' -e 's|^LDPATH=.*|LDPATH=|' "$d"
   done
+  export ac_cv_header_libintl_h=no ac_cv_lib_c_gettext=no ac_cv_lib_intl_gettext=no ac_cv_func_gettext=no
   quiet smake INS_BASE=/usr/local INS_RBASE=/usr/local \
     "CFLAGS=-Os $SYS -Wno-implicit-int -Wno-implicit-function-declaration -Wno-int-conversion" \
     "LDOPTX=$SYS"
@@ -137,7 +140,8 @@ source_row 7-Zip 26.05 "LGPL-2.1-or-later, BSD-3-Clause, unRAR restriction" \
 log "checking that the tools only use system libraries"
 bad=0
 for b in "$OUT"/bin/*; do
-  others=$(otool -L "$b" | tail -n +2 | awk '{print $1}' | grep -vE '^(/usr/lib/|/System/Library/)' || true)
+  # (lines ending in ':' are otool's headers, one per architecture in a universal binary)
+  others=$(otool -L "$b" | awk '!/:$/ {print $1}' | grep -vE '^(/usr/lib/|/System/Library/)' || true)
   if [ -n "$others" ]; then
     echo "  $(basename "$b") links outside the system: $others" >&2
     bad=1
