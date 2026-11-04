@@ -70,6 +70,11 @@ tar -xjf "$f" -C "$WORK"
 (
   cd "$WORK/cdrtools-3.02"
   rm -f lib*/*_p.mk                  # skip the profiled libraries (as Homebrew does)
+  # The Schily defaults add -I/usr/local/include and -L/usr/local/lib, where Homebrew lives on Intel
+  # Macs, so its gettext got linked in.  Build against the SDK only.
+  for d in DEFAULTS/Defaults.mac-os10 DEFAULTS_ENG/Defaults.mac-os10; do
+    sed -i '' -e 's|^DEFOSINCDIRS=.*|DEFOSINCDIRS=|' -e 's|^LDPATH=.*|LDPATH=|' "$d"
+  done
   quiet smake INS_BASE=/usr/local INS_RBASE=/usr/local \
     "CFLAGS=-O2 $SYS -Wno-implicit-int -Wno-implicit-function-declaration -Wno-int-conversion" \
     "LDOPTX=$SYS"
