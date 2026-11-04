@@ -140,11 +140,19 @@ jobs:
           release: "14.3"
           copyback: false
           prepare: |
-            pkg install -y python3 python312 py312-pyside6 py312-numpy py312-lz4 cdrtools cdrdao dvd+rw-tools
+            set -e
+            v=$(pkg search -q -x '^py3[0-9]+-pyside6-' | sed -n 's/^py\(3[0-9]*\)-pyside6-.*/\1/p' | sort -rn | head -n1)
+            echo "PySide6 is packaged for Python $v"
+            [ -n "$v" ]
+            pkg install -y "python$v" "py$v-pyside6" "py$v-numpy" "py$v-lz4" cdrtools cdrdao dvd+rw-tools
+            py=/usr/local/bin/python$(echo "$v" | sed 's/^3/3./')
+            [ -e /usr/local/bin/python3 ] || ln -s "$py" /usr/local/bin/python3
+            ln -sf "$py" /usr/local/bin/python-discforge
           run: |
             set -e
             export XDG_CONFIG_HOME=$(mktemp -d) XDG_CACHE_HOME=$(mktemp -d) QT_QPA_PLATFORM=offscreen
-            python3.12 -W error::ResourceWarning -m unittest discover -s tests -v
-            python3.12 tests/gui_smoke.py
-            python3.12 -c "import sys; sys.argv=['DiscForge','--self-test']; from discforge.gui.app import main; sys.exit(main())"
-            python3.12 -m discforge doctor
+            PY=/usr/local/bin/python-discforge
+            $PY -W error::ResourceWarning -m unittest discover -s tests -v
+            $PY tests/gui_smoke.py
+            $PY -c "import sys; sys.argv=['DiscForge','--self-test']; from discforge.gui.app import main; sys.exit(main())"
+            $PY -m discforge doctor

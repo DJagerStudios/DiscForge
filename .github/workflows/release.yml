@@ -244,10 +244,17 @@ jobs:
           release: "14.3"
           envs: VERSION
           prepare: |
-            pkg install -y python3 python312 py312-pyside6 py312-numpy py312-lz4 cdrtools cdrdao dvd+rw-tools
+            set -e
+            v=$(pkg search -q -x '^py3[0-9]+-pyside6-' | sed -n 's/^py\(3[0-9]*\)-pyside6-.*/\1/p' | sort -rn | head -n1)
+            echo "PySide6 is packaged for Python $v"
+            [ -n "$v" ]
+            pkg install -y "python$v" "py$v-pyside6" "py$v-numpy" "py$v-lz4" cdrtools cdrdao dvd+rw-tools
+            py=/usr/local/bin/python$(echo "$v" | sed 's/^3/3./')
+            [ -e /usr/local/bin/python3 ] || ln -s "$py" /usr/local/bin/python3
+            ln -sf "$py" /usr/local/bin/python-discforge
           run: |
             set -e
-            python3.12 packaging/build.py --version "$VERSION" --out dist
+            python-discforge packaging/build.py --version "$VERSION" --out dist
             mkdir -p build/check && tar -xzf "dist/DiscForge-$VERSION-freebsd-x86_64.tar.gz" -C build/check
             build/check/DiscForge/discforge.sh --version
             build/check/DiscForge/discforge.sh doctor

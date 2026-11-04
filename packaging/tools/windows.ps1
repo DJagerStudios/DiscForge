@@ -31,10 +31,11 @@ function Fetch([string]$Url, [string]$Sha256, [string]$Name, [string]$Dir = $Src
         return $dest
     }
     Write-Host "==> download $Url"
-    for ($i = 1; $i -le 4; $i++) {
-        try { Invoke-WebRequest -Uri $Url -OutFile "$dest.part" -UseBasicParsing; break }
-        catch { if ($i -eq 4) { throw }; Start-Sleep -Seconds (5 * $i) }
-    }
+    # curl.exe (part of Windows 10 and 11), not Invoke-WebRequest: SourceForge answers PowerShell's
+    # web client with an HTML page instead of the file
+    $curl = Join-Path $env:SystemRoot "System32\curl.exe"
+    & $curl -fsSL --retry 4 --retry-delay 5 -o "$dest.part" $Url
+    if ($LASTEXITCODE -ne 0) { throw "couldn't download ${Url} (curl exit $LASTEXITCODE)" }
     $got = (Get-FileHash "$dest.part" -Algorithm SHA256).Hash
     if ($got -ne $Sha256.ToUpper()) { throw "checksum mismatch for ${Url}: $got" }
     Move-Item -Force "$dest.part" $dest

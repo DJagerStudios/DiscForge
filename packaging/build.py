@@ -293,13 +293,9 @@ FREEBSD_INSTALL = r"""#!/bin/sh
 set -e
 HERE=$(cd "$(dirname "$0")" && pwd)
 if [ "$(id -u)" != 0 ]; then echo "Run this as root (su or doas): ./install.sh" >&2; exit 1; fi
-# the package set's default Python (3.12 at the time of writing), so PySide6 comes prebuilt
-PYV=$(pkg rquery '%dn' python3 2>/dev/null | sed -n 's/^python\(3[0-9][0-9]*\)$/\1/p' | head -n1)
-PY=""
-for v in "$PYV" 312 313 311; do
-    [ -n "$v" ] || continue
-    if pkg rquery %n "py$v-pyside6" >/dev/null 2>&1; then PY=$v; break; fi
-done
+# the Python version this package set builds PySide6 for (the newest, if there are several)
+pkg update -q || true
+PY=$(pkg search -q -x '^py3[0-9]+-pyside6-' | sed -n 's/^py\(3[0-9]*\)-pyside6-.*/\1/p' | sort -rn | head -n1)
 [ -n "$PY" ] || { echo "No PySide6 package was found for this FreeBSD release." >&2; exit 1; }
 pkg install -y "python$PY" "py$PY-pyside6" "py$PY-numpy" "py$PY-lz4" cdrtools cdrdao dvd+rw-tools 7-zip
 ln -sf "$HERE/discforge.sh" /usr/local/bin/discforge
