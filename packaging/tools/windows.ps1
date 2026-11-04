@@ -124,7 +124,8 @@ $header = @"
 
 DiscForge runs these programs as separate processes. Each keeps its own licence (see the other
 files in this folder). Their source archives are published with every DiscForge release
-(``DiscForge-<version>-tool-sources.tar``) and are listed here with their SHA-256 checksums.
+(``DiscForge-<version>-tool-sources.tar``) and are listed here with their SHA-256 checksums;
+MAME's complete source (about 150 MB) is at the address listed for it.
 
 | Tool | Version | Licence | Source | SHA-256 |
 |---|---|---|---|---|
