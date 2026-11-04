@@ -98,6 +98,9 @@ class ChdVariants(Tmp):
             job.cleanup()
 
     def test_dvd_chd(self):
+        r = subprocess.run(["chdman", "help"], capture_output=True, text=True)
+        if "createdvd" not in r.stdout + r.stderr:
+            self.skipTest("this chdman predates createdvd")
         iso = self.ps2_iso()
         chd = self.p("new.chd")
         subprocess.run(["chdman", "createdvd", "-i", iso, "-o", chd, "-f"], check=True, capture_output=True)
