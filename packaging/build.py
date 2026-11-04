@@ -155,6 +155,9 @@ BUNDLE = r'''
 app = BUNDLE(coll, name="DiscForge.app", icon={icon!r}, bundle_identifier="io.github.djagerstudios.discforge",
              info_plist={{"CFBundleShortVersionString": {ver!r}, "CFBundleVersion": {ver!r},
                           "NSHighResolutionCapable": True, "LSMinimumSystemVersion": "14.0",
+                          # PyInstaller takes this from the last program in the bundle, the console CLI:
+                          # without it, the window would be a background agent (no Dock icon, no menus)
+                          "LSBackgroundOnly": False,
                           "CFBundleDocumentTypes": [{{"CFBundleTypeName": "Disc image", "CFBundleTypeRole": "Viewer",
                               "CFBundleTypeExtensions": ["iso", "cue", "bin", "chd", "cdi", "gdi", "wbfs", "rvz",
                                                           "gcz", "cso", "zso", "ecm", "ccd"]}}]}})

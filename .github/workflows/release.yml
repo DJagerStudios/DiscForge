@@ -212,6 +212,8 @@ jobs:
           mkdir -p build/check && ditto -x -k "dist/DiscForge-$VERSION-macos-${{ matrix.arch }}.zip" build/check
           app=build/check/DiscForge.app/Contents/MacOS
           codesign --verify --deep --strict build/check/DiscForge.app
+          # a normal app with a Dock icon and menus, not a background agent
+          [ "$(plutil -extract LSBackgroundOnly raw build/check/DiscForge.app/Contents/Info.plist)" = false ]
           "$app/discforge-cli" --version
           "$app/discforge-cli" doctor
           DISCFORGE_SELF_TEST_REPORT=$PWD/build/self-test.txt QT_QPA_PLATFORM=offscreen "$app/DiscForge" --self-test \
