@@ -103,6 +103,7 @@ A disc that's almost right doesn't boot. These are the details DiscForge takes c
 - **Linux:** your user needs to be in the drive's group (`optical` or `cdrom`). DiscForge shows the exact command if it isn't, for example `sudo usermod -aG optical $USER`, then log out and back in.
 - **Windows:** nothing to set up. Burning over Remote Desktop needs the `AllowRemoteDASD` policy.
 - **macOS:** when macOS asks what to do with the blank disc, choose **Ignore**. DiscForge unmounts the disc itself before burning.
+- **Xbox on DVD+R:** Linux and FreeBSD set the DVD-ROM book type that Samsung Xbox drives need; Windows and macOS can't, so use DVD-R for Xbox games there.
 - **FreeBSD:** `install.sh` prints the `devfs.rules` lines that give the `operator` group the drive.
 
 ## Honest about testing
