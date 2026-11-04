@@ -27,6 +27,15 @@ class Stage:
     warnings: list[str] = field(default_factory=list)
 
 
+def input_charset(folder: str) -> str:
+    """mkisofs -input-charset for a folder: 'default' (a built-in 1:1 table, like ISO-8859-1) when every
+    name is plain ASCII, so mkisofs needs neither its charset tables nor iconv; UTF-8 otherwise."""
+    for _root, dirs, files in os.walk(folder):
+        if any(not n.isascii() for n in dirs + files):
+            return "utf-8"
+    return "default"
+
+
 def find_mkisofs() -> str:
     for name in ("mkisofs", "genisoimage"):
         p = tools.find(name)
@@ -129,8 +138,9 @@ def build_iso(st: Stage, lba: int, out_path: str) -> str:
         f.write(st.ip)
     vol = "".join(c if c.isalnum() else "_" for c in st.title.upper())[:32] or "DREAMCAST"
     cmd = [find_mkisofs(), "-quiet", "-C", f"0,{lba}", "-V", vol, "-G", ip_path,
-           "-l", "-J", "-joliet-long", "-r", "-D", "-input-charset", "utf-8", "-o", out_path, st.dir]
-    r = subprocess.run(cmd, capture_output=True, text=True)
+           "-l", "-J", "-joliet-long", "-r", "-D", "-input-charset", input_charset(st.dir), "-o", out_path, st.dir]
+    r = subprocess.run(cmd, capture_output=True, text=True, errors="replace", stdin=subprocess.DEVNULL,
+                       env=tools.env())
     os.remove(ip_path)
     if r.returncode != 0:
         raise DiscError("mkisofs failed: " + (r.stderr.strip() or r.stdout.strip()))

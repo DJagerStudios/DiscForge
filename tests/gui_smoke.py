@@ -26,7 +26,7 @@ from PySide6.QtWidgets import QApplication  # noqa: E402
 
 app = QApplication(sys.argv[:1])
 
-from discforge import library  # noqa: E402
+from discforge import library, tools  # noqa: E402
 from discforge.gui import theme as T  # noqa: E402
 from discforge.gui import window as A  # noqa: E402
 from test_multi import SimDrive, mkiso, raw_mode2  # noqa: E402
@@ -105,7 +105,11 @@ def burn_once(media: str, game: str, expect_platform: str, sub: str):
 st = burn_once("CD-R", cue, "ps1", "cd")
 check(st.get("driver_used") == "generic-mmc-raw", "PS1 written raw by cdrdao")
 st = burn_once("DVD-R", ps2, "ps2", "dvd")
-check(any(c[0] == "growisofs" and "-use-the-force-luke=dao" in c for c in st["calls"]), "PS2 written DAO by growisofs")
+if tools.DVD_WITH_CDRECORD:                       # Windows / macOS
+    check(any("-sao" in c for c in st["calls"]), "PS2 written disc-at-once by cdrecord")
+else:
+    check(any(c[0] == "growisofs" and "-use-the-force-luke=dao" in c for c in st["calls"]),
+          "PS2 written DAO by growisofs")
 ds = os.path.expanduser("~/.cache/discforge-dev/dl-dreamshell/DreamShell_bootloader_v2.9.cdi")
 if os.path.exists(ds):
     st = burn_once("CD-R", ds, "dreamcast", "dc")

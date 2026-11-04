@@ -612,8 +612,9 @@ def _folder_job(path: str, ident: D.Identity, rep, cancel, opts) -> Job:
         iso = os.path.join(work, "data.iso")
         label = re.sub(r"[^A-Z0-9_]", "_", ident.title.upper())[:32] or "DISC"
         rep("Building the data disc…", -1)
+        from .homebrew import input_charset
         args = [mkisofs, "-quiet", "-V", label, "-J", "-joliet-long", "-r", "-l", "-iso-level", "3", "-udf"
-                if total > 4 << 30 else "-D", "-o", iso, path]
+                if total > 4 << 30 else "-D", "-input-charset", input_charset(path), "-o", iso, path]
         r = subprocess.run(args, capture_output=True, text=True, errors="replace", stdin=subprocess.DEVNULL,
                            env=tools.env())
         if r.returncode != 0 or not os.path.exists(iso):

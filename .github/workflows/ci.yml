@@ -141,6 +141,7 @@ jobs:
           copyback: false
           prepare: |
             set -e
+            pkg update -f
             v=$(pkg search -q -x '^py3[0-9]+-pyside6-' | sed -n 's/^py\(3[0-9]*\)-pyside6-.*/\1/p' | sort -rn | head -n1)
             echo "PySide6 is packaged for Python $v"
             [ -n "$v" ]

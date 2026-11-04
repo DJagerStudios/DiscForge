@@ -70,6 +70,51 @@ if "-atip" in args or "-toc" in args:
     sys.exit(0)
 
 # ---- writing
+bad = [a for a in args if a.split("=")[0] in ("layerbreak", "booktype")]
+if bad:                                          # real cdrecord: these only exist inside driveropts=
+    print(f"cdrecord: Bad Option: {bad[0]}.", file=sys.stderr)
+    sys.exit(255)
+drive = next((a.split("=", 1)[1] for a in args if a.startswith("driveropts=")), "")
+for o in drive.split(","):
+    if o.startswith("layerbreak="):
+        st["layer_break"] = int(o.split("=", 1)[1])
+        save(st)
+if "-sao" in args and MEDIA.startswith("DVD"):   # a DVD written disc-at-once: one track from sector 0
+    img = next(a for a in args if not a.startswith("-") and "=" not in a and os.path.isfile(a))
+    size = os.path.getsize(img)
+    sectors = -(-size // 2048)
+    if sectors > CAPACITY:
+        print(f"cdrecord: Data may not fit on current disk ({sectors} sectors, {CAPACITY} free).", file=sys.stderr)
+        sys.exit(255)
+    dummy = "-dummy" in args
+    print(f"Starting to write CD/DVD/BD at speed {next((a.split('=')[1] for a in args if a.startswith('speed=')), '4')}"
+          f" in {'dummy' if dummy else 'real'} SAO mode for single session.")
+    print("Starting new track at sector: 0")
+    if not dummy:
+        dev = next((a.split("=", 1)[1] for a in args if a.startswith("dev=")), "")
+        targets = [os.path.join(D, "disc.bin")] + ([dev] if os.path.isfile(dev) else [])
+        for t in targets:
+            with open(img, "rb") as src, open(t, "wb") as out:
+                while True:
+                    chunk = src.read(1 << 20)
+                    if not chunk:
+                        break
+                    out.write(chunk)
+                if size % 2048:
+                    out.write(bytes(-size % 2048))
+        if size % 2048:
+            print(f"\nWARNING: padding up to secsize (by {-size % 2048} bytes).")
+    mb = size >> 20
+    for k in range(0, mb + 1, max(1, mb // 4 or 1)):
+        sys.stdout.write(f"\rTrack 01: {k:4d} of {mb:4d} MB written (fifo 100%) [buf  99%]   4.0x.")
+    print()
+    print("Fixating...")
+    print("Fixating time:    1.000s")
+    if not dummy:
+        st["tracks"] = [{"lba": 0, "sectors": sectors, "mode": "data", "session": 1}]
+        st["sessions"], st["closed"] = 1, True
+    save(st)
+    sys.exit(0)
 if st["busy_fail"] > 0:
     st["busy_fail"] -= 1
     save(st)

@@ -70,13 +70,21 @@ tar -xjf "$f" -C "$WORK"
 (
   cd "$WORK/cdrtools-3.02"
   rm -f lib*/*_p.mk                  # skip the profiled libraries (as Homebrew does)
+  # avoffset probes the stack layout at build time; when clang turns its probe loop into a trap
+  # (arm64), let it fail the way it was designed to (it catches SIGSEGV/SIGBUS the same way):
+  # the build then simply leaves out the argv[0] lookup that needs the probe.
+  sed -i '' 's/^\(	signal(SIGSEGV, handler);\)$/\1\
+#ifdef	SIGTRAP\
+	signal(SIGTRAP, handler);\
+#endif/' inc/avoffset.c
+  grep -q "SIGTRAP, handler" inc/avoffset.c
   # The Schily defaults add -I/usr/local/include and -L/usr/local/lib, where Homebrew lives on Intel
   # Macs, so its gettext got linked in.  Build against the SDK only.
   for d in DEFAULTS/Defaults.mac-os10 DEFAULTS_ENG/Defaults.mac-os10; do
     sed -i '' -e 's|^DEFOSINCDIRS=.*|DEFOSINCDIRS=|' -e 's|^LDPATH=.*|LDPATH=|' "$d"
   done
   quiet smake INS_BASE=/usr/local INS_RBASE=/usr/local \
-    "CFLAGS=-O2 $SYS -Wno-implicit-int -Wno-implicit-function-declaration -Wno-int-conversion" \
+    "CFLAGS=-Os $SYS -Wno-implicit-int -Wno-implicit-function-declaration -Wno-int-conversion" \
     "LDOPTX=$SYS"
   for t in cdrecord readcd mkisofs; do
     bin=$(find "$t/OBJ" -type f -name "$t" | head -n1)

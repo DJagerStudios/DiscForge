@@ -127,7 +127,12 @@ class Jobs(Tmp):
     def test_ecm_cue_inside_zip(self):
         cue = self.ps1_disc(audio=False)
         b = self.p("ps1", "Game (Track 1).bin")
-        subprocess.run(["bin2ecm", b, b + ".ecm"], check=True, capture_output=True)
+        from test_ecm import Encoder
+        enc = Encoder()
+        with open(b, "rb") as f:
+            enc.mode2_bin(f.read())
+        with open(b + ".ecm", "wb") as f:
+            f.write(enc.finish())
         z = self.p("Game (Europe).zip")
         with zipfile.ZipFile(z, "w") as zf:
             zf.write(cue, "Game (USA).cue")

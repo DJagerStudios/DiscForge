@@ -19,6 +19,7 @@ from discforge import detect as D  # noqa: E402
 from discforge import formats as F  # noqa: E402
 from discforge import jobs as J  # noqa: E402
 from discforge import sectors as S  # noqa: E402
+from discforge import tools  # noqa: E402
 from discforge import xbox as X  # noqa: E402
 
 FAKE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fake_drive")
@@ -146,6 +147,14 @@ class SimDrive:
     def writes(self, tool):
         return [c for c in self.state()["calls"] if c[0] == tool and c[1] in ("write", "simulate", "-dvd-compat")]
 
+    def dvd_write(self):
+        """The one DVD write call: growisofs where it's used, else cdrecord disc-at-once."""
+        if tools.DVD_WITH_CDRECORD:
+            (w,) = [c for c in self.state()["calls"] if "-sao" in c]
+        else:
+            (w,) = self.writes("growisofs")
+        return w
+
 
 def burn(job, sim, **kw):
     return J.burn_job(job, B.BurnOptions(dev=sim.dev, speed=None, **kw), log=lambda m: None)
@@ -244,16 +253,31 @@ class PlayStationTests(Tmp):
         with SimDrive(self.tmp, media="DVD-R") as sim:
             res = burn(job, sim)
             self.assertTrue(res.ok and res.verified)
-            (w,) = sim.writes("growisofs")
-            self.assertIn("-use-the-force-luke=dao", w)
-            self.assertIn("-speed=4", w)
+            w = sim.dvd_write()
+            if tools.DVD_WITH_CDRECORD:              # Windows / macOS: cdrecord, disc-at-once
+                self.assertIn("speed=4", w)
+            else:
+                self.assertIn("-use-the-force-luke=dao", w)
+                self.assertIn("-speed=4", w)
             self.assertFalse(any(c[0] == "dvd+rw-booktype" for c in sim.state()["calls"]))
         with SimDrive(self.tmp + "/plus", media="DVD+R") as sim:
             res = burn(job, sim)
             self.assertTrue(res.ok and res.verified)
-            (w,) = sim.writes("growisofs")
+            w = sim.dvd_write()
             self.assertNotIn("-use-the-force-luke=dao", w)
-            self.assertTrue(any(c[0] == "dvd+rw-booktype" for c in sim.state()["calls"]))
+            if not tools.DVD_WITH_CDRECORD:
+                self.assertTrue(any(c[0] == "dvd+rw-booktype" for c in sim.state()["calls"]))
+
+    def test_dual_layer_break_reaches_the_burner(self):
+        """Whichever burner the system uses, the game's own layer break must be the one written."""
+        from discforge import dvd as DVD
+        iso = self.ps2_iso()
+        job = J.open_job(iso)
+        plan = DVD.DvdPlan(job.dvd.image, job.dvd.sectors, "dvd-dl", 2_000_000, "t", 4, True, True, "ps2")
+        m = B.Media(present=True, kind="DVD+R/DL", blank=True, capacity=4_171_712)
+        cmd = DVD.CdrecordDvdBurner(B.BurnOptions(dev="x")).command(plan, m, {}, "DVD+R/DL")
+        self.assertIn("driveropts=burnfree,layerbreak=2000000", cmd)
+        self.assertFalse(any(a.startswith("layerbreak=") for a in cmd))
 
     def test_ps2_cd_iso_goes_to_cd_as_mode2(self):
         self.write("p2cd/SYSTEM.CNF", b"BOOT2 = cdrom0:\\SLPS_250.01;1\r\n")

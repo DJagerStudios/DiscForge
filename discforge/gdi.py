@@ -176,10 +176,11 @@ def load_gdi(path: str, title: str | None = None, progress=None) -> Disc:
         vol = (fs.volume_id or "DREAMCAST")[:32]
         cmd = [find_mkisofs(), "-quiet", "-C", f"0,{GD_LBA}", "-V", vol, "-G", ip_path, "-sort", sort_path,
                "-l", "-D", "-relaxed-filenames", "-allow-lowercase", "-allow-multidot", "-no-iso-translate",
-               "-input-charset", "iso8859-1", "-o", iso, root]
+               "-input-charset", "default", "-o", iso, root]          # 1:1, like ISO-8859-1; no tables
         if progress:
             progress("Building the CD image…", 0.9)
-        r = subprocess.run(cmd, capture_output=True, text=True)
+        r = subprocess.run(cmd, capture_output=True, text=True, errors="replace", stdin=subprocess.DEVNULL,
+                           env=tools.env())
         if r.returncode != 0:
             raise DiscError("mkisofs failed: " + (r.stderr.strip() or r.stdout.strip())[-500:])
         shutil.rmtree(root, ignore_errors=True)   # the ISO is all we need now

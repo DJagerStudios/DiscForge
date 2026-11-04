@@ -148,3 +148,6 @@ foreach ($exe in $checks.Keys) {
 $ErrorActionPreference = "Stop"
 Remove-Item -Recurse -Force $Work
 Get-ChildItem $Bin | Format-Table Name, Length
+# the checks above leave a tool's own exit code behind (chdman's usage screen returns 1)
+$global:LASTEXITCODE = 0
+exit 0

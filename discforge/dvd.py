@@ -365,16 +365,17 @@ class CdrecordDvdBurner(_DvdBase):
     def command(self, plan: DvdPlan, m: B.Media, mi: dict, kind: str) -> list[str]:
         exe = tool("cdrecord", "cdrtools")
         speed = self._speed(plan, mi)
+        drive = ["burnfree"]
+        dl = plan.sectors > DVD5 or "DL" in m.kind.upper()
+        if dl and plan.layer_break:
+            drive.append(f"layerbreak={plan.layer_break}")      # a drive option (driveropts=) in cdrecord
         args = [exe, "-v", f"dev={devices.address(self.opts.dev, 'cdrecord')}", f"gracetime={B.GRACE_TIME}",
-                "driveropts=burnfree", "-sao"]
+                "driveropts=" + ",".join(drive), "-sao"]
         if speed:
             args.append(f"speed={speed}")
         if self.opts.simulate:
             args.append("-dummy")
-        dl = plan.sectors > DVD5 or "DL" in m.kind.upper()
-        if dl and plan.layer_break:
-            args.append(f"layerbreak={plan.layer_break}")
-        args.append(plan.image)
+        args.append(plan.image)                                 # cdrecord pads a short last sector itself
         return args
 
     def _write(self, args: list[str]) -> tuple[int, list[str], bool]:
