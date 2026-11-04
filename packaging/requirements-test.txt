@@ -1,4 +1,6 @@
 # What the test suite needs when DiscForge runs from source (any Python 3.10+).
-PySide6-Essentials>=6.5
+# PySide6 6.12 on Python < 3.12 drops references to None (fatal once None isn't immortal)
+PySide6-Essentials>=6.5,<6.12; python_version < "3.12"
+PySide6-Essentials>=6.5; python_version >= "3.12"
 numpy>=1.21
 lz4>=3

@@ -295,8 +295,17 @@ HERE=$(cd "$(dirname "$0")" && pwd)
 if [ "$(id -u)" != 0 ]; then echo "Run this as root (su or doas): ./install.sh" >&2; exit 1; fi
 # the Python version this package set builds PySide6 for (the newest, if there are several)
 pkg update -q || true
-PY=$(pkg search -q -x '^py3[0-9]+-pyside6-' | sed -n 's/^py\(3[0-9]*\)-pyside6-.*/\1/p' | sort -rn | head -n1)
-[ -n "$PY" ] || { echo "No PySide6 package was found for this FreeBSD release." >&2; exit 1; }
+PY=$(pkg search -q -x '^py3[0-9]+-pyside6-[0-9]' | sed -n 's/^py\(3[0-9]*\)-pyside6-.*/\1/p' | sort -rn | head -n1)
+if [ -z "$PY" ]; then
+    cat >&2 <<'NOPYSIDE'
+PySide6 isn't in your package repository (the quarterly branch doesn't always have it).
+To use the latest branch, run these as root, then ./install.sh again:
+    mkdir -p /usr/local/etc/pkg/repos
+    echo 'FreeBSD: { url: "pkg+https://pkg.FreeBSD.org/${ABI}/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
+    pkg update -f
+NOPYSIDE
+    exit 1
+fi
 pkg install -y "python$PY" "py$PY-pyside6" "py$PY-numpy" "py$PY-lz4" cdrtools cdrdao dvd+rw-tools 7-zip
 ln -sf "$HERE/discforge.sh" /usr/local/bin/discforge
 mkdir -p /usr/local/share/applications /usr/local/share/icons/hicolor/scalable/apps
