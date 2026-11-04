@@ -249,13 +249,14 @@ jobs:
             find_pyside() { pkg search -q -x '^py3[0-9]+-pyside6-[0-9]' | sed -n 's/^py\(3[0-9]*\)-pyside6-.*/\1/p' | sort -rn | head -n1; }
             pkg update -f
             v=$(find_pyside)
-            if [ -z "$v" ]; then
-              echo "PySide6 isn't in the quarterly packages; using the latest branch"
+            for br in quarterly latest; do    # a branch can lack a PySide6 build for a while
+              [ -z "$v" ] || break
+              echo "No PySide6 package here; trying the $br branch"
               mkdir -p /usr/local/etc/pkg/repos
-              printf '%s\n' 'FreeBSD: { url: "pkg+https://pkg.FreeBSD.org/${ABI}/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
+              printf '%s\n' "FreeBSD: { url: \"pkg+https://pkg.FreeBSD.org/\${ABI}/$br\" }" > /usr/local/etc/pkg/repos/FreeBSD.conf
               pkg update -f
               v=$(find_pyside)
-            fi
+            done
             pkg search -q pyside || true
             echo "PySide6 is packaged for Python $v"
             [ -n "$v" ]

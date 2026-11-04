@@ -298,10 +298,11 @@ pkg update -q || true
 PY=$(pkg search -q -x '^py3[0-9]+-pyside6-[0-9]' | sed -n 's/^py\(3[0-9]*\)-pyside6-.*/\1/p' | sort -rn | head -n1)
 if [ -z "$PY" ]; then
     cat >&2 <<'NOPYSIDE'
-PySide6 isn't in your package repository (the quarterly branch doesn't always have it).
-To use the latest branch, run these as root, then ./install.sh again:
+Your package branch has no PySide6 build right now (a branch sometimes lacks one for a while).
+To use the other branch, run these as root (or put "latest" instead of "quarterly"), then
+./install.sh again:
     mkdir -p /usr/local/etc/pkg/repos
-    echo 'FreeBSD: { url: "pkg+https://pkg.FreeBSD.org/${ABI}/latest" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
+    echo 'FreeBSD: { url: "pkg+https://pkg.FreeBSD.org/${ABI}/quarterly" }' > /usr/local/etc/pkg/repos/FreeBSD.conf
     pkg update -f
 NOPYSIDE
     exit 1
