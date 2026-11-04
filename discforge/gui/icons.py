@@ -40,6 +40,8 @@ def paint(p: QPainter, name: str, rect: QRectF, color: QColor | str, stroke: flo
 
 
 def pixmap(name: str, size: int, color: QColor | str, dpr: float = 2.0, stroke: float = 1.8) -> QPixmap:
+    if size <= 0:
+        return QPixmap()
     pm = QPixmap(int(size * dpr), int(size * dpr))
     pm.fill(Qt.GlobalColor.transparent)
     pm.setDevicePixelRatio(dpr)
@@ -62,6 +64,8 @@ class _Engine(QIconEngine):
         paint(p, self.name, QRectF(rect), col, self.stroke)
 
     def pixmap(self, size, mode, state):  # noqa: N802
+        if size.isEmpty():                  # Qt on macOS asks for 0x0 icons; there's nothing to paint
+            return QPixmap()
         pm = QPixmap(size)
         pm.fill(Qt.GlobalColor.transparent)
         p = QPainter(pm)

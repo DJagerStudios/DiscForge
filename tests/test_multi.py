@@ -449,7 +449,7 @@ class XboxTests(Tmp):
         X.folder_to_xiso(self.p("xb"), xiso)
         redump = self.p("Test (USA).iso")
         with open(redump, "wb") as f:
-            f.truncate(X.REDUMP_GAME_OFF + 64 << 20)
+            f.truncate(X.REDUMP_GAME_OFF + (64 << 20))       # a sparse 'video partition', then the game
             f.seek(X.REDUMP_GAME_OFF)
             with open(xiso, "rb") as src:
                 f.write(src.read())

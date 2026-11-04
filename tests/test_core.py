@@ -140,11 +140,14 @@ class CdiTests(unittest.TestCase):
             self.assertEqual(S.trailing_form2(dsrc), 2)
 
     def test_rejects_garbage(self):
-        with tempfile.NamedTemporaryFile() as f:
-            f.write(os.urandom(4096))
-            f.flush()
+        fd, path = tempfile.mkstemp()               # (Windows can't reopen an open NamedTemporaryFile)
+        try:
+            with os.fdopen(fd, "wb") as f:
+                f.write(os.urandom(4096))
             with self.assertRaises(cdi.CdiError):
-                cdi.read_cdi(f.name)
+                cdi.read_cdi(path)
+        finally:
+            os.unlink(path)
 
 
 class PlanTests(unittest.TestCase):
